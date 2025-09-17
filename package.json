@@ -1,0 +1,38 @@
+{
+  "name": "da-vinci-pets",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "test": "jest --verbose",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "expo": "~54.0.7",
+    "expo-status-bar": "~3.0.8",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-dotenv": "^3.4.11"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
+    "@types/react": "~19.1.0",
+    "@types/react-test-renderer": "^19.1.0",
+    "babel-jest": "^30.1.2",
+    "babel-preset-expo": "^54.0.1",
+    "jest": "^30.1.3",
+    "jest-expo": "^54.0.11",
+    "react-native-testing-library": "^2.2.0",
+    "react-test-renderer": "^19.1.0",
+    "ts-jest": "^29.4.2",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
