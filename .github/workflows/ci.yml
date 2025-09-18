@@ -1,0 +1,30 @@
+name: CI
+
+on:
+    pull_request:
+        types: [reopened,opened,synchronize]
+        branches:
+            - main
+            - develop
+    
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: '18'
+                cache: 'npm'
+
+            - name: Instalar dependências
+              run: npm install
+              
+            - name: Build do projeto
+              run: npx expo export
+
+            - name: Rodar testes
+              run: npm test
