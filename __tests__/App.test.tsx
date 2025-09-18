@@ -1,7 +1,7 @@
 import React from 'react';
 import { act } from 'react-test-renderer';
 import renderer from 'react-test-renderer';
-import App from '../../App';
+import App from '../src/App';
 
 describe('App Component', () => {
   it('deve renderizar corretamente', () => {

@@ -1,7 +1,7 @@
 {
   "name": "da-vinci-pets",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "start": "expo start",
     "test": "jest --verbose",
