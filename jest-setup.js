@@ -1,4 +1,11 @@
-import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
-import 'react-native-gesture-handler';
-// Mocking AsyncStorage
-jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
+// Mock expo-router
+jest.mock('expo-router', () => ({
+  Link: ({ children, href, ...props }) => children,
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+  }),
+  useLocalSearchParams: () => ({}),
+  usePathname: () => '/',
+}));
