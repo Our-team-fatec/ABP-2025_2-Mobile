@@ -1,11 +1,5 @@
 module.exports = {
-  preset: 'react-native',
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(expo-status-bar|react-native|@react-native|expo|@expo|@unimodules|unimodules|@react-navigation|expo-router)/)',
-  ],
+  preset: 'jest-expo',
   setupFilesAfterEnv: [
     '<rootDir>/jest-setup.js',
     '@testing-library/jest-native/extend-expect'
