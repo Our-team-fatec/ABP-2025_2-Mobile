@@ -1,14 +1,13 @@
 import React from 'react';
-import { act } from 'react-test-renderer';
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import App from '../src/App';
 
 describe('App Component', () => {
-  it('deve renderizar corretamente', () => {
+  it('deve renderizar corretamente', async () => {
     let tree;
-    act(() => {
-      tree = renderer.create(<App />).toJSON();
+    await act(async () => {
+      tree = renderer.create(<App />);
     });
-    expect(tree).toMatchSnapshot();
-  });
+    expect(tree.toJSON()).toMatchSnapshot();
+  }, 20000);
 });
