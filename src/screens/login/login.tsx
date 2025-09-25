@@ -7,20 +7,23 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
+
+  // A CORREÇÃO DEFINITIVA ESTÁ AQUI
+  const webStyle = { outline: 'none' } as any;
+
   const handleLogin = () => {
     if (!email || !senha) {
       Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
-
-    // Aqui futuramente você chama sua API
     Alert.alert("Login", `Email: ${email}\nSenha: ${senha}`);
   };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
     
-
   return (
     <View style={styles.container}>
         <View style={styles.image}>
@@ -38,35 +41,39 @@ export default function Login() {
                 <Text style={styles.buttonTextGoogle}>Continuar com Google</Text>
             </TouchableOpacity>
           <View style={styles.separatorContainer}>
-                    <View style={styles.separatorLine}/>
-                    <Text style={styles.separatorText}>ou</Text>
-                    <View style={styles.separatorLine}/>
-                </View>
+                  <View style={styles.separatorLine}/>
+                  <Text style={styles.separatorText}>ou</Text>
+                  <View style={styles.separatorLine}/>
+              </View>
 
             <Text>Email</Text>
             <TextInput
-                style={styles.input}
+                style={[styles.input, webStyle, focusedInput === 'email' && styles.inputFocused]}
                 placeholder="Digite seu e-mail"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                onFocus={() => setFocusedInput('email')}
+                onBlur={() => setFocusedInput(null)}
             />
 
             <Text>Senha</Text>
-            <View style={styles.passwordContainer}>
-                    <TextInput
-                        style={styles.passwordInput}
-                        placeholder="Digite sua senha"
-                        value={senha}
-                        onChangeText={setSenha}
-                        secureTextEntry={!showPassword}
-                        selectionColor="#89b490"
-                    />
-                    <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}> 
-                        <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#666"/>
-                    </TouchableOpacity>
-                </View>
+            <View style={[styles.passwordContainer, focusedInput === 'senha' && styles.inputFocused]}>
+                <TextInput
+                    style={[styles.passwordInput, webStyle]}
+                    placeholder="Digite sua senha"
+                    value={senha}
+                    onChangeText={setSenha}
+                    secureTextEntry={!showPassword}
+                    selectionColor="#89b490"
+                    onFocus={() => setFocusedInput('senha')}
+                    onBlur={() => setFocusedInput(null)}
+                />
+                <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}> 
+                    <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#666"/>
+                </TouchableOpacity>
+            </View>
             <Link href="/other" asChild>
                 <Pressable>
                     <Text style={styles.links}>Esqueci a senha?</Text>
@@ -85,7 +92,6 @@ export default function Login() {
 };
 
 const styles = StyleSheet.create({
-
   containerLogin:{
     flex: 1,
     width: "100%",
@@ -135,11 +141,11 @@ const styles = StyleSheet.create({
     height: 35,
     borderColor: "#ccc",
     borderWidth: 1,
+    marginTop: 15,
     backgroundColor: "#ffffffff",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-
   },
   buttonText: {
     color: "#fff",
@@ -187,7 +193,6 @@ const styles = StyleSheet.create({
         color: '#666',
         fontWeight: "200"
     },
-
     passwordContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -205,5 +210,8 @@ const styles = StyleSheet.create({
     eyeIcon: {
         padding: 12,
     },
-
-})
+  inputFocused: {
+    borderColor: '#74a57f',
+    borderWidth: 2,
+  },
+});
