@@ -126,6 +126,7 @@ exports[`App Component deve renderizar corretamente 1`] = `
           "borderWidth": 1,
           "height": 35,
           "justifyContent": "center",
+          "marginTop": 15,
           "opacity": 1,
           "width": "100%",
         }
@@ -189,19 +190,27 @@ exports[`App Component deve renderizar corretamente 1`] = `
     <TextInput
       autoCapitalize="none"
       keyboardType="email-address"
+      onBlur={[Function]}
       onChangeText={[Function]}
+      onFocus={[Function]}
       placeholder="Digite seu e-mail"
       style={
-        {
-          "backgroundColor": "#f8f9fa",
-          "borderColor": "#9fb9a4ff",
-          "borderRadius": 8,
-          "borderWidth": 1,
-          "height": 50,
-          "marginBottom": 10,
-          "paddingHorizontal": 10,
-          "width": "100%",
-        }
+        [
+          {
+            "backgroundColor": "#f8f9fa",
+            "borderColor": "#9fb9a4ff",
+            "borderRadius": 8,
+            "borderWidth": 1,
+            "height": 50,
+            "marginBottom": 10,
+            "paddingHorizontal": 10,
+            "width": "100%",
+          },
+          {
+            "outline": "none",
+          },
+          false,
+        ]
       }
       value=""
     />
@@ -210,28 +219,38 @@ exports[`App Component deve renderizar corretamente 1`] = `
     </Text>
     <View
       style={
-        {
-          "alignItems": "center",
-          "backgroundColor": "#f9f9f9",
-          "borderColor": "#9fb9a4ff",
-          "borderRadius": 8,
-          "borderWidth": 1,
-          "flexDirection": "row",
-          "marginBottom": 15,
-        }
+        [
+          {
+            "alignItems": "center",
+            "backgroundColor": "#f9f9f9",
+            "borderColor": "#9fb9a4ff",
+            "borderRadius": 8,
+            "borderWidth": 1,
+            "flexDirection": "row",
+            "marginBottom": 15,
+          },
+          false,
+        ]
       }
     >
       <TextInput
+        onBlur={[Function]}
         onChangeText={[Function]}
+        onFocus={[Function]}
         placeholder="Digite sua senha"
         secureTextEntry={true}
         selectionColor="#89b490"
         style={
-          {
-            "flex": 1,
-            "fontSize": 16,
-            "padding": 12,
-          }
+          [
+            {
+              "flex": 1,
+              "fontSize": 16,
+              "padding": 12,
+            },
+            {
+              "outline": "none",
+            },
+          ]
         }
         value=""
       />
