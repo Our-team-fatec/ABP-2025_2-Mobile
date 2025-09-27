@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View,Text,TextInput,TouchableOpacity,StyleSheet,Alert,Image,Pressable } from "react-native";
+import { View,Text,TextInput,TouchableOpacity,StyleSheet,Alert,Image,ScrollView,KeyboardAvoidingView,Platform,SafeAreaView } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function Cadastro(){
@@ -25,88 +25,105 @@ export default function Cadastro(){
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Image
-                    source={require("../../../assets/favicon.png")}
-                    style={styles.icon}
-                />
-                <Text style={styles.title}>Da Vinci Pets</Text>
-                <Text style={styles.subtitle}>Crie sua conta</Text>
-            </View>
-            <View style={styles.formContainer}>
-                <Text style={styles.text}>Criar Conta</Text>
-                <TouchableOpacity style={styles.buttonGoogle}>
-                    <Text style={styles.buttonGoogleText}>Continuar com o Google</Text>
-                </TouchableOpacity>
-                <View style={styles.separatorContainer}>
-                    <View style={styles.separatorLine}/>
-                    <Text style={styles.separatorText}>ou</Text>
-                    <View style={styles.separatorLine}/>
-                </View>
-                <View style={styles.labelContainer}>
-                    <MaterialIcons name="perm-identity" size={16} color="#666" />
-                    <Text style={styles.labelText}>Nome completo</Text>
-                </View>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Digite seu nome completo"
-                    value={nome}
-                    onChangeText={setNome}
-                />
-                <View style={styles.labelContainer}>
-                    <MaterialIcons name="email" size={16} color="#666" />
-                    <Text style={styles.labelText}>E-mail</Text>
-                </View>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Digite seu e-mail"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    selectionColor="#89b490"
-                />
-                <View style={styles.labelContainer}>
-                    <MaterialIcons name="lock" size={16} color="#666" />
-                    <Text style={styles.labelText}>Senha</Text>
-                </View>
-                <View style={styles.passwordContainer}>
-                    <TextInput
-                        style={styles.passwordInput}
-                        placeholder="Digite sua senha"
-                        value={senha}
-                        onChangeText={setSenha}
-                        secureTextEntry={!showPassword}
-                        selectionColor="#89b490"
-                    />
-                    <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}> 
-                        <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#666"/>
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity style={styles.button} onPress={handleCadastro}>
-                    <Text style={styles.buttonText}>➜   Criar conta</Text>
-                </TouchableOpacity>
-                <View style={styles.separatorContainer}>
-                    <View style={styles.separatorLine}/>
-                </View>
-                <View style={styles.loginContainer}>
-                    <Text style={styles.subtitle}>Já tem uma conta? </Text>
-                    <TouchableOpacity onPress={handleLogin}>
-                        <Text style={styles.linkText}>Fazer Login</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
+        <SafeAreaView style={styles.safeArea}>
+            <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+                <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+                    <View style={styles.container}>
+                        <View style={styles.header}>
+                            <Image
+                                source={require("../../../assets/favicon.png")}
+                                style={styles.icon}
+                            />
+                            <Text style={styles.title}>Da Vinci Pets</Text>
+                            <Text style={styles.subtitle}>Crie sua conta</Text>
+                        </View>
+                        <View style={styles.formContainer}>
+                            <Text style={styles.text}>Criar Conta</Text>
+                            <TouchableOpacity style={styles.buttonGoogle}>
+                                <Text style={styles.buttonGoogleText}>Continuar com o Google</Text>
+                            </TouchableOpacity>
+                            <View style={styles.separatorContainer}>
+                                <View style={styles.separatorLine}/>
+                                <Text style={styles.separatorText}>ou</Text>
+                                <View style={styles.separatorLine}/>
+                            </View>
+                            <View style={styles.labelContainer}>
+                                <MaterialIcons name="perm-identity" size={16} color="#666" />
+                                <Text style={styles.labelText}>Nome completo</Text>
+                            </View>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Digite seu nome completo"
+                                value={nome}
+                                onChangeText={setNome}
+                            />
+                            <View style={styles.labelContainer}>
+                                <MaterialIcons name="email" size={16} color="#666" />
+                                <Text style={styles.labelText}>E-mail</Text>
+                            </View>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Digite seu e-mail"
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                selectionColor="#89b490"
+                            />
+                            <View style={styles.labelContainer}>
+                                <MaterialIcons name="lock" size={16} color="#666" />
+                                <Text style={styles.labelText}>Senha</Text>
+                            </View>
+                            <View style={styles.passwordContainer}>
+                                <TextInput
+                                    style={styles.passwordInput}
+                                    placeholder="Digite sua senha"
+                                    value={senha}
+                                    onChangeText={setSenha}
+                                    secureTextEntry={!showPassword}
+                                    selectionColor="#89b490"
+                                />
+                                <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}> 
+                                    <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#666"/>
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity style={styles.button} onPress={handleCadastro}>
+                                <Text style={styles.buttonText}>➜   Criar conta</Text>
+                            </TouchableOpacity>
+                            <View style={styles.separatorContainer}>
+                                <View style={styles.separatorLine}/>
+                            </View>
+                            <View style={styles.loginContainer}>
+                                <Text style={styles.subtitle}>Já tem uma conta? </Text>
+                                <TouchableOpacity onPress={handleLogin}>
+                                    <Text style={styles.linkText}>Fazer Login</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
     
 };
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
         flex: 1,
+        backgroundColor: "#fafcfa",
+    },
+    keyboardView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#fafcfa",
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 32,
+    },
+    container: {
+        width: "100%",
+        maxWidth: 420,
     },
     header: {
         alignItems: "center",
