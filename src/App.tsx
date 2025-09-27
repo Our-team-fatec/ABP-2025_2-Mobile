@@ -1,10 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
+import CadastroPet from './screens/CadastroPet/cadastropet';
 
 
 export default function App() {
   return (
-    <View>
-      <Text>Bem vindo ao Da Vinci Pets</Text>
-    </View>
+    <CadastroPet />
   );
 }
