@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {View,Text,TextInput,TouchableOpacity,StyleSheet,Alert,Image,Pressable,ScrollView} from "react-native";
+import {View,Text,TextInput,TouchableOpacity,StyleSheet,Alert,Image,Pressable,ScrollView,Modal,KeyboardAvoidingView,Platform} from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 
 interface ActionButtonProps {
@@ -10,6 +10,30 @@ active?: boolean;
 color?: string;
 onPress?: () => void;
 }
+
+type PetGender = "male" | "female" | "";
+
+type NewPetForm = {
+  name: string;
+  species: string;
+  breed: string;
+  birthDate: string;
+  color: string;
+  gender: PetGender;
+  isNeutered: boolean;
+  notes: string;
+};
+
+const initialNewPetData: NewPetForm = {
+  name: "",
+  species: "",
+  breed: "",
+  birthDate: "",
+  color: "",
+  gender: "",
+  isNeutered: false,
+  notes: "",
+};
 
 const ActionButton: React.FC<ActionButtonProps> = ({
 label,
@@ -60,6 +84,83 @@ export default function CadastroPet() {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
   const [isAddHover, setIsAddHover] = useState(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [newPetData, setNewPetData] = useState<NewPetForm>(initialNewPetData);
+  const [isSpeciesDropdownOpen, setIsSpeciesDropdownOpen] = useState(false);
+
+  const speciesOptions = [
+    "Canino",
+    "Felino",
+    "Ave",
+    "Peixe",
+    "Roedor",
+    "Réptil",
+    "Outro",
+  ];
+
+  const handleOpenAddModal = () => {
+    setIsAddModalVisible(true);
+    setIsAddHover(false);
+    setIsSpeciesDropdownOpen(false);
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalVisible(false);
+    setIsAddHover(false);
+    setIsSpeciesDropdownOpen(false);
+  };
+
+  const handleNewPetChange = <K extends keyof NewPetForm>(
+    field: K,
+    value: NewPetForm[K]
+  ) => {
+    setNewPetData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSelectSpecies = (option: string) => {
+    handleNewPetChange("species", option);
+    setIsSpeciesDropdownOpen(false);
+  };
+
+  const handleSelectGender = (gender: PetGender) => {
+    handleNewPetChange("gender", gender);
+  };
+
+  const handleToggleNeutered = () => {
+    setNewPetData((prev) => ({ ...prev, isNeutered: !prev.isNeutered }));
+  };
+
+  const handleTakePhoto = () => {
+    Alert.alert("Foto do pet", "Captura de foto será adicionada em breve.");
+  };
+
+  const handleOpenGallery = () => {
+    Alert.alert("Galeria", "Seleção de imagens será adicionada em breve.");
+  };
+
+  const handleSubmitNewPet = () => {
+    if (!isFormValid) {
+      Alert.alert(
+        "Cadastro de Pet",
+        "Preencha os campos obrigatórios: nome, espécie, sexo e data de nascimento."
+      );
+      return;
+    }
+
+    Alert.alert(
+      "Cadastro de Pet",
+      `${newPetData.name} cadastrado com sucesso!`
+    );
+    setNewPetData(initialNewPetData);
+    setIsSpeciesDropdownOpen(false);
+    handleCloseAddModal();
+  };
+
+  const isFormValid =
+    newPetData.name.trim().length > 0 &&
+    newPetData.species.trim().length > 0 &&
+    newPetData.gender !== "" &&
+    newPetData.birthDate.trim().length > 0;
 
   const getStatusStyle = (status: "vacinacao" | "consulta" | "aviso" | "pendente") => {
     switch (status) {
@@ -217,7 +318,7 @@ export default function CadastroPet() {
         {/* Adicionar Pet */}
         <Pressable
           style={[styles.addPetButton, isAddHover && styles.addPetButtonHover]}
-          onPress={() => {Alert.alert("Adicionar Pet", "Funcionalidade ainda não implementada.");}}
+          onPress={handleOpenAddModal}
           onHoverIn={() => setIsAddHover(true)}
           onHoverOut={() => setIsAddHover(false)}
         >
@@ -226,6 +327,235 @@ export default function CadastroPet() {
           <Text style={styles.addPetSubtitle}>Cadastre um novo pet</Text>
         </Pressable>
       </ScrollView>
+
+      <Modal
+          visible={isAddModalVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={handleCloseAddModal}
+        >
+          <View style={styles.modalOverlay}>
+            <Pressable style={styles.modalBackdrop} onPress={handleCloseAddModal} />
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={styles.modalContainer}
+            >
+              <View style={styles.modalSheet}>
+                <View style={styles.modalCard}>
+                  <ScrollView
+                    style={styles.modalFormScroll}
+                    contentContainerStyle={styles.modalFormContent}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator
+                  >
+                    <View style={styles.sectionCard}>
+                    <Text style={styles.sectionTitleModal}>Foto do Pet</Text>
+                    <View style={styles.photoCircle}>
+                      <MaterialIcons name="photo-camera" size={32} color="#9ca3af" />
+                    </View>
+                    <View style={styles.photoButtonsRow}>
+                      <TouchableOpacity style={styles.photoButton} onPress={handleTakePhoto}>
+                        <MaterialIcons name="photo-camera" size={16} color="#047857" />
+                        <Text style={styles.photoButtonLabel}>Tirar Foto</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.photoButton} onPress={handleOpenGallery}>
+                        <MaterialIcons name="photo-library" size={16} color="#047857" />
+                        <Text style={styles.photoButtonLabel}>Galeria</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View style={styles.sectionCard}>
+                    <Text style={styles.sectionTitleModal}>Informações Básicas</Text>
+
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Nome do Pet *</Text>
+                      <TextInput
+                        style={styles.modalInput}
+                        placeholder="Ex: Buddy"
+                        value={newPetData.name}
+                        onChangeText={(text) => handleNewPetChange("name", text)}
+                      />
+                    </View>
+
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Espécie *</Text>
+                      <View style={styles.selectContainer}>
+                        <Pressable
+                          style={styles.selectTrigger}
+                          onPress={() => setIsSpeciesDropdownOpen((prev) => !prev)}
+                        >
+                          <Text
+                            style={[
+                              styles.selectTriggerText,
+                              !newPetData.species && styles.selectPlaceholder,
+                            ]}
+                          >
+                            {newPetData.species || "Selecione"}
+                          </Text>
+                          <MaterialIcons
+                            name={isSpeciesDropdownOpen ? "expand-less" : "expand-more"}
+                            size={20}
+                            color="#047857"
+                          />
+                        </Pressable>
+                        {isSpeciesDropdownOpen && (
+                          <View style={styles.selectDropdown}>
+                            {speciesOptions.map((option) => (
+                              <Pressable
+                                key={option}
+                                style={[
+                                  styles.selectOption,
+                                  newPetData.species === option && styles.selectOptionActive,
+                                ]}
+                                onPress={() => handleSelectSpecies(option)}
+                              >
+                                <Text
+                                  style={[
+                                    styles.selectOptionText,
+                                    newPetData.species === option && styles.selectOptionTextActive,
+                                  ]}
+                                >
+                                  {option}
+                                </Text>
+                              </Pressable>
+                            ))}
+                          </View>
+                        )}
+                      </View>
+                    </View>
+
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Raça</Text>
+                      <TextInput
+                        style={styles.modalInput}
+                        placeholder="Ex: Golden Retriever"
+                        value={newPetData.breed}
+                        onChangeText={(text) => handleNewPetChange("breed", text)}
+                      />
+                    </View>
+
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Sexo *</Text>
+                      <View style={styles.genderRow}>
+                        <Pressable
+                          style={[
+                            styles.genderOption,
+                            newPetData.gender === "male" && styles.genderOptionActive,
+                          ]}
+                          onPress={() => handleSelectGender("male")}
+                        >
+                          <View
+                            style={[
+                              styles.genderRadio,
+                              newPetData.gender === "male" && styles.genderRadioActive,
+                            ]}
+                          />
+                          <Text style={styles.genderLabel}>Macho</Text>
+                        </Pressable>
+                        <Pressable
+                          style={[
+                            styles.genderOption,
+                            newPetData.gender === "female" && styles.genderOptionActive,
+                          ]}
+                          onPress={() => handleSelectGender("female")}
+                        >
+                          <View
+                            style={[
+                              styles.genderRadio,
+                              newPetData.gender === "female" && styles.genderRadioActive,
+                            ]}
+                          />
+                          <Text style={styles.genderLabel}>Fêmea</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Data de Nascimento *</Text>
+                      <View style={styles.inputWithIcon}>
+                        <MaterialIcons name="event" size={18} color="#6b7280" />
+                        <TextInput
+                          style={styles.inputWithIconText}
+                          placeholder="Selecione a data"
+                          value={newPetData.birthDate}
+                          onChangeText={(text) => handleNewPetChange("birthDate", text)}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Cor</Text>
+                      <TextInput
+                        style={styles.modalInput}
+                        placeholder="Ex: Dourado"
+                        value={newPetData.color}
+                        onChangeText={(text) => handleNewPetChange("color", text)}
+                      />
+                    </View>
+
+                    <Pressable style={styles.checkboxRow} onPress={handleToggleNeutered}>
+                      <View
+                        style={[
+                          styles.checkboxBox,
+                          newPetData.isNeutered && styles.checkboxBoxChecked,
+                        ]}
+                      >
+                        {newPetData.isNeutered && (
+                          <MaterialIcons name="check" size={14} color="#ffffff" />
+                        )}
+                      </View>
+                      <Text style={styles.checkboxLabel}>Castrado</Text>
+                    </Pressable>
+
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Observações</Text>
+                      <TextInput
+                        style={[styles.modalInput, styles.modalTextArea]}
+                        placeholder="Vacinas, cuidados especiais..."
+                        value={newPetData.notes}
+                        multiline
+                        numberOfLines={4}
+                        onChangeText={(text) => handleNewPetChange("notes", text)}
+                      />
+                    </View>
+                  </View>
+
+                  </ScrollView>
+                  <View style={styles.modalActions}>
+                    <TouchableOpacity
+                      style={[styles.modalButton, styles.modalCancelButton]}
+                      onPress={handleCloseAddModal}
+                    >
+                      <Text style={[styles.modalButtonLabel, styles.modalCancelButtonLabel]}>
+                        Cancelar
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleSubmitNewPet}
+                      disabled={!isFormValid}
+                      style={[
+                        styles.modalButton,
+                        styles.modalPrimaryButton,
+                        !isFormValid && styles.modalButtonDisabled,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.modalButtonLabel,
+                          styles.modalPrimaryButtonLabel,
+                          !isFormValid && styles.modalButtonDisabledLabel,
+                        ]}
+                      >
+                        Salvar pet
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </View>
+        </Modal>
     </View>
   );
 }
@@ -422,7 +752,7 @@ const styles = StyleSheet.create({
   },
   addPetButtonHover:{
     borderColor: "#d0e0d3",
-    backgroundColor: "#ff0000ff"
+    backgroundColor: "#eefaf1",
   },
   addPetText: {
     fontWeight: "600",
@@ -446,5 +776,295 @@ const styles = StyleSheet.create({
   },
   petPendente: {
     color: "#f4d35e"
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(17, 24, 39, 0.55)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  modalContainer: {
+    width: "100%",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    justifyContent: "center",
+  },
+  modalSheet: {
+    width: "100%",
+    maxWidth: 420,
+    maxHeight: "80%",
+    alignSelf: "center",
+  },
+  modalCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    gap: 14,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+    width: "100%",
+    maxHeight: "100%",
+    overflow: "hidden",
+  },
+  modalFormScroll: {
+    flexGrow: 0,
+    width: "100%",
+  },
+  modalFormContent: {
+    paddingBottom: 24,
+    gap: 14,
+  },
+  sectionCard: {
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 16,
+    padding: 16,
+    gap: 14,
+    backgroundColor: "#f9fafb",
+  },
+  modalHeader: {
+    gap: 6,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#064e3b",
+    textAlign: "center"
+  },
+  modalSubtitle: {
+    fontSize: 13,
+    color: "#4b5563",
+  },
+  sectionTitleModal: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1f2937",
+  },
+  photoCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  photoButtonsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 12,
+  },
+  photoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    borderWidth: 1,
+    borderColor: "#cde7d6",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "#ffffff",
+  },
+  photoButtonLabel: {
+    fontSize: 13,
+    color: "#047857",
+    fontWeight: "600",
+  },
+  modalField: {
+    gap: 6,
+  },
+  modalLabel: {
+    fontSize: 12,
+    color: "#374151",
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: "#f9fafb",
+    fontSize: 14,
+    color: "#111827",
+  },
+  modalTextArea: {
+    minHeight: 96,
+    textAlignVertical: "top",
+  },
+  selectContainer: {
+    position: "relative",
+  },
+  selectTrigger: {
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  selectTriggerText: {
+    fontSize: 14,
+    color: "#111827",
+  },
+  selectPlaceholder: {
+    color: "#9ca3af",
+  },
+  selectDropdown: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    overflow: "hidden",
+  },
+  selectOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  selectOptionActive: {
+    backgroundColor: "#ecfdf5",
+  },
+  selectOptionText: {
+    fontSize: 14,
+    color: "#111827",
+  },
+  selectOptionTextActive: {
+    color: "#047857",
+    fontWeight: "600",
+  },
+  modalRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  genderRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  genderOption: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#fff",
+  },
+  genderOptionActive: {
+    borderColor: "#047857",
+    backgroundColor: "#ecfdf5",
+  },
+  genderRadio: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#9ca3af",
+  },
+  genderRadioActive: {
+    borderColor: "#047857",
+    backgroundColor: "#047857",
+  },
+  genderLabel: {
+    fontSize: 14,
+    color: "#111827",
+    fontWeight: "500",
+  },
+  inputWithIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  inputWithIconText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#111827",
+  },
+  checkboxRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  checkboxBox: {
+    width: 18,
+    height: 18,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#9ca3af",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  checkboxBoxChecked: {
+    backgroundColor: "#047857",
+    borderColor: "#047857",
+  },
+  checkboxLabel: {
+    fontSize: 14,
+    color: "#111827",
+  },
+  modalRowItem: {
+    flex: 1,
+    gap: 6,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 12,
+    marginTop: 4,
+  },
+  modalButton: {
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  modalButtonLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  modalCancelButton: {
+    backgroundColor: "#f9fafb",
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+  },
+  modalCancelButtonLabel: {
+    color: "#374151",
+  },
+  modalPrimaryButton: {
+    backgroundColor: "#10b981",
+  },
+  modalPrimaryButtonLabel: {
+    color: "#fff",
+  },
+  modalButtonDisabled: {
+    backgroundColor: "#9ca3af",
+  },
+  modalButtonDisabledLabel: {
+    color: "#e5e7eb",
+  },
 });
