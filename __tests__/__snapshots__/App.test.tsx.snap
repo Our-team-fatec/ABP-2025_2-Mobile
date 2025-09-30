@@ -1,3 +1,562 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App Component deve renderizar corretamente 1`] = `null`;
+exports[`App Component deve renderizar corretamente 1`] = `
+<RCTSafeAreaView
+  style={
+    {
+      "backgroundColor": "#fafcfa",
+      "flex": 1,
+    }
+  }
+>
+  <View
+    onLayout={[Function]}
+    style={
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "paddingBottom": 0,
+        },
+      ]
+    }
+  >
+    <RCTScrollView
+      contentContainerStyle={
+        {
+          "alignItems": "center",
+          "flexGrow": 1,
+          "justifyContent": "center",
+          "paddingHorizontal": 20,
+          "paddingVertical": 32,
+        }
+      }
+      keyboardShouldPersistTaps="handled"
+    >
+      <View>
+        <View
+          style={
+            {
+              "maxWidth": 420,
+              "width": "100%",
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "marginBottom": 30,
+              }
+            }
+          >
+            <Image
+              source={
+                {
+                  "testUri": "../../../assets/favicon.png",
+                }
+              }
+              style={
+                {
+                  "borderRadius": 20,
+                  "height": 80,
+                  "marginBottom": 15,
+                  "width": 80,
+                }
+              }
+            />
+            <Text
+              style={
+                {
+                  "fontFamily": "Arial",
+                  "fontSize": 24,
+                  "fontWeight": "bold",
+                  "marginBottom": 5,
+                }
+              }
+            >
+              Da Vinci Pets
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#666",
+                  "fontFamily": "Arial",
+                  "fontSize": 16,
+                  "fontWeight": "300",
+                  "textAlign": "center",
+                }
+              }
+            >
+              Crie sua conta
+            </Text>
+          </View>
+          <View
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "borderRadius": 15,
+                "elevation": 5,
+                "padding": 30,
+                "shadowColor": "#000",
+                "shadowOffset": {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 0.1,
+                "shadowRadius": 8,
+                "width": "100%",
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "fontFamily": "Arial",
+                  "fontSize": 16,
+                  "textAlign": "center",
+                }
+              }
+            >
+              Criar Conta
+            </Text>
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={false}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                {
+                  "backgroundColor": "#f9f9f9",
+                  "borderColor": "rgba(37, 37, 37, 0.33)",
+                  "borderRadius": 10,
+                  "borderWidth": 1,
+                  "marginBottom": 15,
+                  "marginTop": 15,
+                  "opacity": 1,
+                  "padding": 12,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#000000ff",
+                    "fontSize": 14,
+                    "fontWeight": "400",
+                    "textAlign": "center",
+                  }
+                }
+              >
+                Continuar com o Google
+              </Text>
+            </View>
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "marginVertical": 20,
+                }
+              }
+            >
+              <View
+                style={
+                  {
+                    "backgroundColor": "#ddd",
+                    "flex": 1,
+                    "height": 1,
+                  }
+                }
+              />
+              <Text
+                style={
+                  {
+                    "color": "#666",
+                    "fontSize": 14,
+                    "fontWeight": "200",
+                    "marginHorizontal": 15,
+                  }
+                }
+              >
+                ou
+              </Text>
+              <View
+                style={
+                  {
+                    "backgroundColor": "#ddd",
+                    "flex": 1,
+                    "height": 1,
+                  }
+                }
+              />
+            </View>
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "marginBottom": 8,
+                }
+              }
+            >
+              <Text
+                color="#666"
+                name="perm-identity"
+                size={16}
+                testID="MaterialIcons-mock"
+              >
+                MaterialIcons
+              </Text>
+              <Text
+                style={
+                  {
+                    "color": "#333",
+                    "fontFamily": "Arial",
+                    "fontSize": 14,
+                    "marginLeft": 6,
+                  }
+                }
+              >
+                Nome completo
+              </Text>
+            </View>
+            <TextInput
+              onChangeText={[Function]}
+              placeholder="Digite seu nome completo"
+              style={
+                {
+                  "backgroundColor": "#f9f9f9",
+                  "borderColor": "#9fb9a4ff",
+                  "borderRadius": 8,
+                  "borderWidth": 1,
+                  "fontSize": 16,
+                  "marginBottom": 15,
+                  "padding": 12,
+                }
+              }
+              value=""
+            />
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "marginBottom": 8,
+                }
+              }
+            >
+              <Text
+                color="#666"
+                name="email"
+                size={16}
+                testID="MaterialIcons-mock"
+              >
+                MaterialIcons
+              </Text>
+              <Text
+                style={
+                  {
+                    "color": "#333",
+                    "fontFamily": "Arial",
+                    "fontSize": 14,
+                    "marginLeft": 6,
+                  }
+                }
+              >
+                E-mail
+              </Text>
+            </View>
+            <TextInput
+              keyboardType="email-address"
+              onChangeText={[Function]}
+              placeholder="Digite seu e-mail"
+              selectionColor="#89b490"
+              style={
+                {
+                  "backgroundColor": "#f9f9f9",
+                  "borderColor": "#9fb9a4ff",
+                  "borderRadius": 8,
+                  "borderWidth": 1,
+                  "fontSize": 16,
+                  "marginBottom": 15,
+                  "padding": 12,
+                }
+              }
+              value=""
+            />
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "marginBottom": 8,
+                }
+              }
+            >
+              <Text
+                color="#666"
+                name="lock"
+                size={16}
+                testID="MaterialIcons-mock"
+              >
+                MaterialIcons
+              </Text>
+              <Text
+                style={
+                  {
+                    "color": "#333",
+                    "fontFamily": "Arial",
+                    "fontSize": 14,
+                    "marginLeft": 6,
+                  }
+                }
+              >
+                Senha
+              </Text>
+            </View>
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#f9f9f9",
+                  "borderColor": "#9fb9a4ff",
+                  "borderRadius": 8,
+                  "borderWidth": 1,
+                  "flexDirection": "row",
+                  "marginBottom": 15,
+                }
+              }
+            >
+              <TextInput
+                onChangeText={[Function]}
+                placeholder="Digite sua senha"
+                secureTextEntry={true}
+                selectionColor="#89b490"
+                style={
+                  {
+                    "flex": 1,
+                    "fontSize": 16,
+                    "padding": 12,
+                  }
+                }
+                value=""
+              />
+              <View
+                accessibilityState={
+                  {
+                    "busy": undefined,
+                    "checked": undefined,
+                    "disabled": undefined,
+                    "expanded": undefined,
+                    "selected": undefined,
+                  }
+                }
+                accessibilityValue={
+                  {
+                    "max": undefined,
+                    "min": undefined,
+                    "now": undefined,
+                    "text": undefined,
+                  }
+                }
+                accessible={true}
+                collapsable={false}
+                focusable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                style={
+                  {
+                    "opacity": 1,
+                    "padding": 12,
+                  }
+                }
+              >
+                <Text
+                  color="#666"
+                  name="visibility-off"
+                  size={24}
+                  testID="MaterialIcons-mock"
+                >
+                  MaterialIcons
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#89b490",
+                  "borderRadius": 8,
+                  "marginTop": 10,
+                  "opacity": 1,
+                  "padding": 15,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#ffffff",
+                    "fontSize": 16,
+                    "fontWeight": "600",
+                  }
+                }
+              >
+                ➜   Criar conta
+              </Text>
+            </View>
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "marginVertical": 20,
+                }
+              }
+            >
+              <View
+                style={
+                  {
+                    "backgroundColor": "#ddd",
+                    "flex": 1,
+                    "height": 1,
+                  }
+                }
+              />
+            </View>
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "center",
+                  "marginTop": 10,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#666",
+                    "fontFamily": "Arial",
+                    "fontSize": 16,
+                    "fontWeight": "300",
+                    "textAlign": "center",
+                  }
+                }
+              >
+                Já tem uma conta? 
+              </Text>
+              <View
+                accessibilityState={
+                  {
+                    "busy": undefined,
+                    "checked": undefined,
+                    "disabled": undefined,
+                    "expanded": undefined,
+                    "selected": undefined,
+                  }
+                }
+                accessibilityValue={
+                  {
+                    "max": undefined,
+                    "min": undefined,
+                    "now": undefined,
+                    "text": undefined,
+                  }
+                }
+                accessible={true}
+                collapsable={false}
+                focusable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                style={
+                  {
+                    "opacity": 1,
+                  }
+                }
+              >
+                <Text
+                  style={
+                    {
+                      "color": "#89b490",
+                      "fontFamily": "Arial",
+                      "fontSize": 16,
+                      "fontWeight": "500",
+                      "textDecorationLine": "underline",
+                    }
+                  }
+                >
+                  Fazer Login
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </RCTScrollView>
+  </View>
+</RCTSafeAreaView>
+`;
