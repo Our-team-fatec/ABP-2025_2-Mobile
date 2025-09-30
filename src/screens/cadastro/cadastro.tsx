@@ -6,6 +6,7 @@ export default function Cadastro(){
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
+    const [adress, setAdress] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     const handleCadastro = () => {
@@ -86,6 +87,34 @@ export default function Cadastro(){
                                     <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#666"/>
                                 </TouchableOpacity>
                             </View>
+                            <View style={styles.labelContainer}>
+                                <MaterialIcons name="lock" size={16} color="#666" />
+                                <Text style={styles.labelText}>Confirme sua senha</Text>
+                            </View>
+                            <View style={styles.passwordContainer}>
+                                <TextInput
+                                    style={styles.passwordInput}
+                                    placeholder="Confirme sua senha"
+                                    value={senha}
+                                    onChangeText={setSenha}
+                                    secureTextEntry={!showPassword}
+                                    selectionColor="#89b490"
+                                />
+                                <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}> 
+                                    <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#666"/>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.labelContainer}>
+                                <MaterialIcons name="home" size={16} color="#666" />
+                                <Text style={styles.labelText}>Endereço</Text>
+                            </View>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Digite seu endereço"
+                                value={adress}
+                                onChangeText={setEmail}
+                                selectionColor="#89b490"
+                            />
                             <TouchableOpacity style={styles.button} onPress={handleCadastro}>
                                 <Text style={styles.buttonText}>➜   Criar conta</Text>
                             </TouchableOpacity>
