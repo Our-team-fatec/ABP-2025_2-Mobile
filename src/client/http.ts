@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TOKEN_LOCAL_STORAGE_KEY } from "../constants/local-storage";
 import { API_CONFIG, DEBUG_CONFIG } from "../config/api";
 
@@ -12,9 +13,15 @@ async function getBody<T>(c: Response | Request): Promise<T> {
 }
 
 async function getHeaders(headers?: HeadersInit): Promise<HeadersInit> {
-  const token = localStorage.getItem(TOKEN_LOCAL_STORAGE_KEY);
-  if (token) {
-    return { ...headers, Authorization: `Bearer ${token}` };
+  try {
+    const token = await AsyncStorage.getItem(TOKEN_LOCAL_STORAGE_KEY);
+    if (token) {
+      return { ...headers, Authorization: `Bearer ${token}` };
+    }
+  } catch (error) {
+    if (DEBUG_CONFIG.ENABLED) {
+      console.error('❌ Erro ao recuperar token:', error);
+    }
   }
 
   return headers ?? {}
@@ -50,38 +57,56 @@ export async function http<T>(
     }
   }
 
-  const request = new Request(url, {
-    ...options,
-    headers: requestHeaders,
-    // Timeout baseado no ambiente
-    signal: AbortSignal.timeout(API_CONFIG.TIMEOUT),
-  })
+  // Implementa timeout manual para React Native
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => {
+    controller.abort()
+  }, API_CONFIG.TIMEOUT)
 
-  const response = await fetch(request)
+  try {
+    const request = new Request(url, {
+      ...options,
+      headers: requestHeaders,
+      signal: controller.signal,
+    })
 
-  // Log da resposta em desenvolvimento
-  if (DEBUG_CONFIG.LOG_API_CALLS) {
-    console.log(`📥 API Response: ${response.status} ${response.statusText}`);
-  }
+    const response = await fetch(request)
+    clearTimeout(timeoutId)
 
-  if (!response.ok) {
-    const errorBody = await response.text()
-    const errorData = errorBody
-      ? JSON.parse(errorBody)
-      : { message: 'Erro desconhecido' }
+    // Log da resposta em desenvolvimento
+    if (DEBUG_CONFIG.LOG_API_CALLS) {
+      console.log(`📥 API Response: ${response.status} ${response.statusText}`);
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.text()
+      const errorData = errorBody
+        ? JSON.parse(errorBody)
+        : { message: 'Erro desconhecido' }
+      
+      if (DEBUG_CONFIG.ENABLED) {
+        console.error('❌ API Error:', errorData);
+      }
+      
+      throw new Error(errorData.message || `Erro HTTP ${response.status}`)
+    }
+
+    const data = await getBody<T>(response)
     
-    if (DEBUG_CONFIG.ENABLED) {
-      console.error('❌ API Error:', errorData);
+    if (DEBUG_CONFIG.LOG_API_CALLS) {
+      console.log('✅ API Success:', data);
     }
     
-    throw new Error(errorData.message || `Erro HTTP ${response.status}`)
+    return data
+  } catch (error) {
+    clearTimeout(timeoutId)
+    
+    // Verifica se o erro foi causado por timeout
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Tempo limite da requisição esgotado')
+    }
+    
+    // Re-lança outros erros
+    throw error
   }
-
-  const data = await getBody<T>(response)
-  
-  if (DEBUG_CONFIG.LOG_API_CALLS) {
-    console.log('✅ API Success:', data);
-  }
-  
-  return data
 }
