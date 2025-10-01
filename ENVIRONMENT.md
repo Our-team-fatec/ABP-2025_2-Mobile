@@ -5,7 +5,7 @@ Este projeto suporta múltiplos ambientes com variáveis de ambiente configuráv
 ## 📁 Arquivos de Ambiente
 
 - `.env` - Ambiente atual (ignorado pelo git)
-- `.env.example` - Template para desenvolvimento 
+- `.env.dev` - Template para desenvolvimento 
 - `.env.production` - Configurações de produção
 
 ## 🚀 Como Usar
@@ -39,7 +39,7 @@ npm start -- --reset-cache
 | Variável | Desenvolvimento | Produção |
 |----------|----------------|----------|
 | `NODE_ENV` | development | production |
-| `API_BASE_URL` | http://localhost:3000/api | https://sua-api-producao.herokuapp.com/api |
+| `API_BASE_URL` | http://localhost:3000/api | URL PRIVADA |
 | `DEBUG_MODE` | true | false |
 | `APP_NAME` | Da Vinci Pets | Da Vinci Pets |
 | `APP_VERSION` | 1.0.0 | 1.0.0 |
