@@ -1,10 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
-import Login from './screens/login/login';
+import Cadastro from './screens/cadastro/cadastro';
 
 export default function App() {
   return (
-    
-      <Login />
+    <Cadastro />
   );
 }
-
