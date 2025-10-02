@@ -1,15 +1,3 @@
-// Mock expo-router
-jest.mock('expo-router', () => ({
-  Link: ({ children, href, ...props }) => children,
-  useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
-  }),
-  useLocalSearchParams: () => ({}),
-  usePathname: () => '/',
-}));
-
 // Mock de todos os ícones do @expo/vector-icons
 jest.mock('@expo/vector-icons', () => {
   const React = require('react');
