@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function Adocoes() {
   const [selectedTab, setSelectedTab] = useState('explorar');
@@ -11,7 +13,6 @@ export default function Adocoes() {
         <Text style={styles.title}>Central de Adoções</Text>
         <Text style={styles.subtitle}>Encontre seu novo melhor amigo</Text>
       </View>
-
       <View style={styles.containerCard}>
         <View style={styles.styleCard}>
           <Feather name="heart" size={24} color="black" />
@@ -36,7 +37,6 @@ export default function Adocoes() {
             selectedTab === 'explorar' && styles.activeTabText
           ]}>Explorar</Text>
         </TouchableOpacity>
-        
         <TouchableOpacity 
           style={[
             styles.tabButton, 
@@ -50,7 +50,6 @@ export default function Adocoes() {
             selectedTab === 'candidaturas' && styles.activeTabText
           ]}>Minhas Candidaturas</Text>
         </TouchableOpacity>
-        
         <TouchableOpacity 
           style={[
             styles.tabButton, 
@@ -64,6 +63,36 @@ export default function Adocoes() {
             selectedTab === 'anuncios' && styles.activeTabText
           ]}>Meus Anúncios</Text>
         </TouchableOpacity>
+      </View>
+      <View style= {styles.buscar}>
+        <View style={styles.searchRow}>
+          <View style={styles.inputContainer}>
+            <FontAwesome6 name="magnifying-glass" size={16} color="#5a5959ff" style={styles.icon} />
+            <TextInput
+              placeholder="Buscar por espécie, raça, localização, ..."
+              placeholderTextColor="#666"
+              selectionColor="#89b490"
+              style={styles.textInput}
+          />
+          </View>
+          <View style={styles.filterContainer}><TouchableOpacity style={styles.filter}><MaterialCommunityIcons name="filter-outline" size={24} color="#78a883" />
+          Filtros
+          </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.buttonsRow}>
+          <TouchableOpacity style={styles.buttons}>
+            Todos
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttons}>
+            Cães
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttons}>
+            Gatos
+          </TouchableOpacity>
+        </View>
+        <View style={styles.petContainer}>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -138,7 +167,7 @@ const styles = StyleSheet.create({
   },
   tabButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 0,
     paddingHorizontal: 8,
     backgroundColor: "#f0f0f0",
     borderWidth: 1,
@@ -172,4 +201,63 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
   },
+  inputContainer: {
+    borderColor: "#d5e4d8",
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 40,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  icon:{
+    marginRight: 8
+  },
+  buscar: {
+    borderColor: "#000",
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    height: 120,
+    margin: 10,
+    flexDirection: "column",
+    gap: 12
+  },
+  filter: {
+    borderColor: "#d5e4d8",
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 40,
+    width: 80,
+    flexDirection: "row",
+    alignItems: "center",
+    color: "#78a883",
+  },
+  filterContainer: {
+    marginLeft: 10
+  },
+  buttons: {
+    borderColor: "#d5e4d8",
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    color: "#78a883"
+  },
+  buttonsRow:{
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8
+  },
+  petContainer: {
+
+  },
+  searchRow:{
+    flexDirection: "row",
+  },
+  textInput:{
+    flex: 1,
+  }
 });
