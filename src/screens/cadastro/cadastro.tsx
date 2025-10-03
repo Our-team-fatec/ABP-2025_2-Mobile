@@ -9,7 +9,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useForm, Controller, FieldErrors } from "react-hook-form";
@@ -21,6 +20,7 @@ import {
   cadastroSchema as Schema,
 } from "../../schemas/cadastro";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type RootStackParamList = {
   Login: undefined;

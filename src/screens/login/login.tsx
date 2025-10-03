@@ -9,16 +9,14 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
 } from "react-native";
-import { Link } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useForm, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginUser } from "../../services/user";
 import { LoginForm as Form, loginSchema as Schema } from "../../schemas/login";
 import { loginStyles as styles } from "../../styles/login";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 type RootStackParamList = {
