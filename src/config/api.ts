@@ -1,13 +1,15 @@
 import { API_BASE_URL, NODE_ENV, DEBUG_MODE } from '@env';
 
 export const API_CONFIG = {
-  BASE_URL: API_BASE_URL || 'http://localhost:3000/api',
+  BASE_URL: API_BASE_URL,
   TIMEOUT: NODE_ENV === 'production' ? 10000 : 5000, 
   ENDPOINTS: {
     USERS: {
       REGISTER: '/users/register',
-      LOGIN: '/users/login',
       PROFILE: '/users/profile',
+    },
+    AUTH:{
+      LOGIN: '/auth/login',
     }
   }
 } as const;

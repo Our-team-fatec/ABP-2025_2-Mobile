@@ -78,6 +78,8 @@ export async function http<T>(
       console.log(`📥 API Response: ${response.status} ${response.statusText}`);
     }
 
+    console.log(response)
+
     if (!response.ok) {
       const errorBody = await response.text()
       const errorData = errorBody

@@ -1,217 +1,208 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, Pressable} from "react-native";
-import { Link } from 'expo-router';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+} from "react-native";
+import { Link } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useForm, Controller, FieldErrors } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginUser } from "../../services/user";
+import { LoginForm as Form, loginSchema as Schema } from "../../schemas/login";
+import { loginStyles as styles } from "../../styles/login";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+type RootStackParamList = {
+  Login: undefined;
+  Cadastro: undefined;
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, "Login">;
+
+export default function Login({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
-  const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
-  // A CORREÇÃO DEFINITIVA ESTÁ AQUI
-  const webStyle = { outline: 'none' } as any;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<Form>({
+    resolver: zodResolver(Schema),
+    mode: "onBlur",
+  });
 
-  const handleLogin = () => {
-    if (!email || !senha) {
-      Alert.alert("Erro", "Preencha todos os campos");
-      return;
+  const handleLogin = async (data: Form) => {
+    try {
+      const response = await loginUser(data);
+
+      console.log("RESPONSE LOGIN: ", response);
+
+      Alert.alert("Sucesso!", `Bem-vindo de volta, ${response.data.usuario.nome}!`, [
+        {
+          text: "OK",
+          onPress: () => console.log("Usuário logado:", response),
+        },
+      ]);
+    } catch (error) {
+      const mensagemErro =
+        error instanceof Error
+          ? error.message
+          : "Erro ao fazer login. Tente novamente.";
+      Alert.alert("Erro", mensagemErro);
     }
-    Alert.alert("Login", `Email: ${email}\nSenha: ${senha}`);
+  };
+
+  const handleLoginError = (errors: FieldErrors<Form>) => {
+    const mensagens = Object.values(errors)
+      .map((err) => err?.message)
+      .filter(Boolean);
+
+    Alert.alert(
+      "Erro",
+      mensagens.length > 0
+        ? mensagens.join("\n")
+        : "Preencha todos os campos corretamente."
+    );
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-    
-  return (
-    <View style={styles.container}>
-        <View style={styles.image}>
-            <Image
-                source={require("../../../assets/favicon.png")}
-                style={{width: 65, height: 65}}
-            />
-            <Text style={styles.title}>DaVinciPets</Text>
-            <Text style={styles.text}>Entre na sua conta</Text>
-        </View>
-        <View style={styles.containerLogin}>
-            <Text style={styles.text}>Fazer Login</Text>
 
-            <TouchableOpacity style={styles.googleButton}>
-                <Text style={styles.buttonTextGoogle}>Continuar com Google</Text>
-            </TouchableOpacity>
-          <View style={styles.separatorContainer}>
-                  <View style={styles.separatorLine}/>
-                  <Text style={styles.separatorText}>ou</Text>
-                  <View style={styles.separatorLine}/>
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <Image
+                source={require("../../../assets/favicon.png")}
+                style={styles.icon}
+              />
+              <Text style={styles.title}>DaVinciPets</Text>
+              <Text style={styles.subtitle}>Entre na sua conta</Text>
+            </View>
+
+            <View style={styles.formContainer}>
+              <Text style={styles.text}>Fazer Login</Text>
+
+              {/* <TouchableOpacity style={styles.buttonGoogle}>
+                <Text style={styles.buttonGoogleText}>
+                  Continuar com Google
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.separatorContainer}>
+                <View style={styles.separatorLine} />
+                <Text style={styles.separatorText}>ou</Text>
+                <View style={styles.separatorLine} />
+              </View> */}
+
+              <View style={styles.labelContainer}>
+                <MaterialIcons name="email" size={16} color="#666" />
+                <Text style={styles.labelText}>E-mail</Text>
               </View>
 
-            <Text>Email</Text>
-            <TextInput
-                style={[styles.input, webStyle, focusedInput === 'email' && styles.inputFocused]}
-                placeholder="Digite seu e-mail"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                onFocus={() => setFocusedInput('email')}
-                onBlur={() => setFocusedInput(null)}
-            />
-
-            <Text>Senha</Text>
-            <View style={[styles.passwordContainer, focusedInput === 'senha' && styles.inputFocused]}>
-                <TextInput
-                    style={[styles.passwordInput, webStyle]}
-                    placeholder="Digite sua senha"
-                    value={senha}
-                    onChangeText={setSenha}
-                    secureTextEntry={!showPassword}
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    style={[styles.input, errors.email && styles.inputError]}
+                    placeholder="Digite seu e-mail"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
                     selectionColor="#89b490"
-                    onFocus={() => setFocusedInput('senha')}
-                    onBlur={() => setFocusedInput(null)}
-                />
-                <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}> 
-                    <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#666"/>
-                </TouchableOpacity>
-            </View>
-            <Link href="/other" asChild>
-                <Pressable>
-                    <Text style={styles.links}>Esqueci a senha?</Text>
-                </Pressable>
-            </Link>
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Entrar</Text>
-            </TouchableOpacity>
-            <View style={styles.separatorContainer}>
-              <View style={styles.separatorLine}/>
-            </View>
-            <Text>Não tenho uma conta? <Link href={"/other"}><Pressable><Text style={styles.links}>Criar conta</Text></Pressable></Link></Text>
-        </View>
-    </View>
-  );
-};
+                  />
+                )}
+              />
 
-const styles = StyleSheet.create({
-  containerLogin:{
-    flex: 1,
-    width: "100%",
-    shadowRadius: 5,
-    shadowColor: "#c9c9c9ff",
-    shadowOpacity: 0.1,
-    elevation: 5,
-    borderRadius: 8,
-    backgroundColor: "#ffffffff" ,
-    padding: 8,
-    marginVertical: 0,
-},
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
-    backgroundColor: "#fafcfa",
-  },
-  title: {
-    fontSize: 23,
-    fontFamily: "arial",
-    fontWeight: "bold",
-    marginBottom: 5,
-    justifyContent: "center",
-  },
-  input: {
-    width: "100%",
-    height: 50,
-    borderColor: "#9fb9a4ff",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    backgroundColor: "#f8f9fa",
-  },
-  button: {
-    width: "100%",
-    height: 40,
-    backgroundColor: "#74a57f",
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  googleButton: {
-    width: "100%",
-    height: 35,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginTop: 15,
-    backgroundColor: "#ffffffff",
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontFamily: "arial",
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-  buttonTextGoogle: {
-    fontFamily: "arial",
-    color: "#000000",
-    fontSize: 14,
-  },
-  image: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 15,
-    fontFamily: "arial",
-    marginBottom: 10,
-    justifyContent: "center",
-    textAlign: "center",
-  },
-  links: {
-    color: "green",
-    fontFamily: "arial",
-    fontSize: 14,
-    marginBottom: 10,
-    justifyContent: "center",
-    textAlign: "right",
-  },
-  separatorContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    separatorLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#ddd'
-    },
-    separatorText: {
-        marginHorizontal: 15,
-        fontSize: 14,
-        color: '#666',
-        fontWeight: "200"
-    },
-    passwordContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: "#9fb9a4ff",
-        borderRadius: 8,
-        backgroundColor: "#f9f9f9",
-        marginBottom: 15,
-    },
-    passwordInput: {
-        flex: 1,
-        padding: 12,
-        fontSize: 16,
-    },
-    eyeIcon: {
-        padding: 12,
-    },
-  inputFocused: {
-    borderColor: '#74a57f',
-    borderWidth: 2,
-  },
-});
+              <View style={styles.labelContainer}>
+                <MaterialIcons name="lock" size={16} color="#666" />
+                <Text style={styles.labelText}>Senha</Text>
+              </View>
+
+              <Controller
+                control={control}
+                name="senha"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View
+                    style={[
+                      styles.passwordContainer,
+                      errors.senha && styles.inputError,
+                    ]}
+                  >
+                    <TextInput
+                      style={styles.passwordInput}
+                      placeholder="Digite sua senha"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      secureTextEntry={!showPassword}
+                      selectionColor="#89b490"
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeIcon}
+                      onPress={togglePasswordVisibility}
+                    >
+                      <MaterialIcons
+                        name={showPassword ? "visibility" : "visibility-off"}
+                        size={24}
+                        color="#666"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+
+              <TouchableOpacity style={styles.forgotPassword}>
+                <Text style={styles.linkText}>Esqueci a senha?</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                onPress={handleSubmit(handleLogin, handleLoginError)}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.buttonText}>
+                  {isSubmitting ? "Entrando..." : "Entrar"}
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.separatorContainer}>
+                <View style={styles.separatorLine} />
+              </View>
+
+              <View style={styles.signupContainer}>
+                <Text style={styles.text}>Não tenho uma conta? </Text>
+         
+                  <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
+                    <Text style={styles.linkText}>Criar conta</Text>
+                  </TouchableOpacity>
+
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
