@@ -44,8 +44,6 @@ export default function Login({ navigation }: Props) {
     try {
       const response = await loginUser(data);
 
-      console.log("RESPONSE LOGIN: ", response);
-
       Alert.alert("Sucesso!", `Bem-vindo de volta, ${response.data.usuario.nome}!`, [
         {
           text: "OK",
@@ -167,6 +165,7 @@ export default function Login({ navigation }: Props) {
                         name={showPassword ? "visibility" : "visibility-off"}
                         size={24}
                         color="#666"
+                        testID="toggle-password"
                       />
                     </TouchableOpacity>
                   </View>
