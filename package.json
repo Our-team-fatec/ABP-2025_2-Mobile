@@ -4,13 +4,19 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "expo start",
+    "start:clear": "expo start --clear",
     "test": "jest --verbose",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "env:dev": "node scripts/switch-env.js dev",
+    "env:prod": "node scripts/switch-env.js prod",
+    "env:info": "node -e \"console.log(require('fs').readFileSync('.env', 'utf8'))\""
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
+    "@hookform/resolvers": "^5.2.2",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "~54.0.7",
     "expo-asset": "^12.0.9",
     "expo-router": "~6.0.7",
@@ -18,12 +24,14 @@
     "lucide-react": "^0.544.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hook-form": "^7.63.0",
     "react-native": "0.81.4",
     "react-native-dotenv": "^3.4.11",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-vector-icons": "^10.3.0",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "^0.21.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.28.3",
