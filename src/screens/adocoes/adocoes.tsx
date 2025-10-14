@@ -91,7 +91,19 @@ export default function Adocoes() {
             Gatos
           </TouchableOpacity>
         </View>
-        <View style={styles.petContainer}>
+        <View style={styles.petCard}>
+          <View>
+             <Image style={styles.petCardImage} source={require("../../../assets/cachorro.jpg")}/>
+          </View>
+          <View style={styles.petCardTexts}>
+            <Text style={styles.petCardTextName}>Luna</Text>
+            <View style={styles.petCardSubTexts}>
+              <Text>Raça:</Text>
+              <Text>Porte:</Text>
+              <Text>Idade:</Text>
+              <Text>Peso:</Text>
+            </View>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -251,13 +263,33 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8
   },
-  petContainer: {
-
-  },
   searchRow:{
     flexDirection: "row",
   },
   textInput:{
     flex: 1,
+  },
+  petCard:{
+    borderColor: "black",
+    borderRadius: 8,
+    borderWidth: 2,
+    margin: 5,
+  },
+  petCardImage: {
+    flex: 1,
+    width: "100%",
+    height: 150,
+    borderRadius: 8,
+  },
+  petCardTextName: {
+    fontFamily: "Arial",
+    fontSize: 24,
+  },
+  petCardSubTexts: {
+    flexDirection: "column",
+    fontSize: 20,
+  },
+  petCardTexts:{
+    margin: 8,
   }
 });
