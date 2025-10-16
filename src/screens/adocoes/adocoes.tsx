@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, Scro
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Entypo from '@expo/vector-icons/Entypo';
 
 export default function Adocoes() {
   const [selectedTab, setSelectedTab] = useState('explorar');
@@ -105,6 +106,13 @@ export default function Adocoes() {
             </View>
           </View>
         </View>
+        <TouchableOpacity style={styles.cadastrarPetButton}>
+          Cadastrar Pet para adoção
+          <View style = {styles.plusIcon}>
+          <Entypo name="plus" size={60} color="black" />
+          </View>
+          Ajude um pet a encontrar um novo lar
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -273,7 +281,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderRadius: 8,
     borderWidth: 2,
-    margin: 5,
+    marginTop: 20,
   },
   petCardImage: {
     flex: 1,
@@ -291,5 +299,14 @@ const styles = StyleSheet.create({
   },
   petCardTexts:{
     margin: 8,
+  },
+  cadastrarPetButton:{
+    borderColor: "black",
+    borderWidth: 2,
+    borderRadius: 8,
+    textAlign: "center",
+  },
+  plusIcon: {
+    alignItems: "center"
   }
 });
