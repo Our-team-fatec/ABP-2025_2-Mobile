@@ -66,7 +66,7 @@ export default function Login({ navigation }: Props) {
       "Erro",
       mensagens.length > 0
         ? mensagens.join("\n")
-        : "Preencha todos os campos corretamente."
+        : "Por favor, preencher todos os campos corretamente."
     );
   };
 
