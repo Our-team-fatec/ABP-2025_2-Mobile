@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
-import Header from './Header';
-import Footer from './Footer';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 
-export default function App() {
+export default function home() {
   return (
     <View style={styles.container}>
       {/* Header fixo no topo */}
