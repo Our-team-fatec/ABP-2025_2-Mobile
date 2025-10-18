@@ -89,13 +89,8 @@ export default function CadastroPet() {
   const [isSpeciesDropdownOpen, setIsSpeciesDropdownOpen] = useState(false);
 
   const speciesOptions = [
-    "Canino",
-    "Felino",
-    "Ave",
-    "Peixe",
-    "Roedor",
-    "Réptil",
-    "Outro",
+    "Cão",
+    "Gato",
   ];
 
   const handleOpenAddModal = () => {
@@ -342,6 +337,9 @@ export default function CadastroPet() {
             >
               <View style={styles.modalSheet}>
                 <View style={styles.modalCard}>
+                  {/* Barra de arraste visual */}
+                  <View style={styles.modalHandle} />
+                  
                   <ScrollView
                     style={styles.modalFormScroll}
                     contentContainerStyle={styles.modalFormContent}
@@ -472,13 +470,13 @@ export default function CadastroPet() {
                     </View>
 
                     <View style={styles.modalField}>
-                      <Text style={styles.modalLabel}>Data de Nascimento *</Text>
+                      <Text style={styles.modalLabel}>Idade *</Text>
                       <View style={styles.inputWithIcon}>
                         <MaterialIcons name="event" size={18} color="#6b7280" />
                         <TextInput
                           style={styles.inputWithIconText}
-                          placeholder="Selecione a data"
-                          value={newPetData.birthDate}
+                          placeholder="Digite a idade"
+                          value={newPetData.age}
                           onChangeText={(text) => handleNewPetChange("birthDate", text)}
                         />
                       </View>
@@ -507,26 +505,12 @@ export default function CadastroPet() {
                       </View>
                       <Text style={styles.checkboxLabel}>Castrado</Text>
                     </Pressable>
-
-                    <View style={styles.modalField}>
-                      <Text style={styles.modalLabel}>Observações</Text>
-                      <TextInput
-                        style={[styles.modalInput, styles.modalTextArea]}
-                        placeholder="Vacinas, cuidados especiais..."
-                        value={newPetData.notes}
-                        multiline
-                        numberOfLines={4}
-                        onChangeText={(text) => handleNewPetChange("notes", text)}
-                      />
-                    </View>
                   </View>
-
                   </ScrollView>
                   <View style={styles.modalActions}>
                     <TouchableOpacity
                       style={[styles.modalButton, styles.modalCancelButton]}
-                      onPress={handleCloseAddModal}
-                    >
+                      onPress={handleCloseAddModal}>
                       <Text style={[styles.modalButtonLabel, styles.modalCancelButtonLabel]}>
                         Cancelar
                       </Text>
@@ -780,30 +764,31 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(17, 24, 39, 0.55)",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
-    paddingHorizontal: 24,
   },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
   },
   modalContainer: {
     width: "100%",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    justifyContent: "center",
+    maxHeight: "100%",
+    justifyContent: "flex-end",
   },
   modalSheet: {
     width: "100%",
-    maxWidth: 420,
-    maxHeight: "80%",
+    maxHeight: "90%",
     alignSelf: "center",
   },
   modalCard: {
     backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 20,
     gap: 14,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -813,20 +798,29 @@ const styles = StyleSheet.create({
     maxHeight: "100%",
     overflow: "hidden",
   },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#d1d5db",
+    borderRadius: 2,
+    alignSelf: "center",
+    marginBottom: 16,
+    marginTop: 8,
+  },
   modalFormScroll: {
     flexGrow: 0,
     width: "100%",
   },
   modalFormContent: {
-    paddingBottom: 24,
-    gap: 14,
+    paddingBottom: 16,
+    gap: 12,
   },
   sectionCard: {
     borderWidth: 1,
     borderColor: "#e5e7eb",
-    borderRadius: 16,
-    padding: 16,
-    gap: 14,
+    borderRadius: 12,
+    padding: 14,
+    gap: 12,
     backgroundColor: "#f9fafb",
   },
   modalHeader: {
@@ -843,17 +837,17 @@ const styles = StyleSheet.create({
     color: "#4b5563",
   },
   sectionTitleModal: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
     color: "#1f2937",
   },
   photoCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    borderWidth: 1,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
     borderColor: "#d1d5db",
-    backgroundColor: "#fff",
+    backgroundColor: "#f9fafb",
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
