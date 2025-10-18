@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView, Pressable } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
+import { MaterialIcons } from '@expo/vector-icons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -214,7 +214,7 @@ export default function Adocoes() {
         </View>
         <Pressable style={styles.cadastrarPetButton}>
           <View style={styles.plusIcon}>
-            <Feather name="plus" size={32} color="#74a57f" />
+            <MaterialIcons name="add" size={32} color={"#74a57e"}/>
           </View>
           <Text style={styles.cadastrarPetTitle}>Cadastrar Pet para Adoção</Text>
           <Text style={styles.cadastrarPetSubtitle}>Ajude um pet a encontrar um novo lar</Text>
