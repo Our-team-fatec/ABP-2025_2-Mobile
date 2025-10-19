@@ -8,6 +8,7 @@ import {
 
 /**
  * Utilitário para acessar variáveis de ambiente de forma segura
+ * Centraliza todas as variáveis de ambiente em um único lugar
  */
 export const Environment = {
   // Informações do app
@@ -19,8 +20,8 @@ export const Environment = {
   IS_DEV: NODE_ENV === 'development',
   IS_PROD: NODE_ENV === 'production',
   
-  // API
-  API_BASE_URL: API_BASE_URL || 'http://localhost:3000/api',
+  // API - Com fallback para a URL de produção
+  API_BASE_URL: API_BASE_URL || 'https://davincipets-api.fly.dev/api',
   
   // Debug
   DEBUG_MODE: DEBUG_MODE === 'true',
@@ -39,7 +40,7 @@ export const Environment = {
   // Informações do ambiente atual
   getInfo: () => ({
     environment: NODE_ENV,
-    apiUrl: API_BASE_URL,
+    apiUrl: API_BASE_URL || 'https://davincipets-api.fly.dev/api',
     debug: DEBUG_MODE === 'true',
     version: APP_VERSION,
   })

@@ -1,8 +1,13 @@
-import { API_BASE_URL, NODE_ENV, DEBUG_MODE } from '@env';
+import { Environment } from '../utils/environment';
+
+// Usa o módulo centralizado de ambiente
+const BASE_URL = Environment.API_BASE_URL;
+const ENV_TYPE = Environment.NODE_ENV;
+const DEBUG = Environment.DEBUG_MODE;
 
 export const API_CONFIG = {
-  BASE_URL: API_BASE_URL,
-  TIMEOUT: NODE_ENV === 'production' ? 10000 : 5000, 
+  BASE_URL: BASE_URL,
+  TIMEOUT: ENV_TYPE === 'production' ? 10000 : 5000, 
   ENDPOINTS: {
     USERS: {
       REGISTER: '/users/register',
@@ -16,13 +21,13 @@ export const API_CONFIG = {
 
 // Configurações de debug
 export const DEBUG_CONFIG = {
-  ENABLED: DEBUG_MODE === 'true',
-  LOG_API_CALLS: NODE_ENV === 'development',
+  ENABLED: DEBUG,
+  LOG_API_CALLS: ENV_TYPE === 'development',
 } as const;
 
 // Helper para verificar ambiente
 export const ENV = {
-  isDevelopment: NODE_ENV === 'development',
-  isProduction: NODE_ENV === 'production',
-  isDebug: DEBUG_MODE === 'true',
+  isDevelopment: ENV_TYPE === 'development',
+  isProduction: ENV_TYPE === 'production',
+  isDebug: DEBUG,
 } as const;

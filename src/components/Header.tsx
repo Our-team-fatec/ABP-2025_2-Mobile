@@ -1,15 +1,16 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, SafeAreaView } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Header() {
   return (
     <>
-      <SafeAreaView style={styles.statusBarArea}>
+      <SafeAreaView style={styles.statusBarArea} edges={["top"]}>
         <StatusBar style="light" backgroundColor="#83af8a" />
       </SafeAreaView>
-      <View style={styles.headerWrapper}>
+      <SafeAreaView style={styles.headerWrapper} edges={["bottom"]}>
         <View style={styles.container}>
            <View style={styles.leftContainer}>
              <Image source={require("../../assets/favicon.png")} style={styles.logo}  />
@@ -24,11 +25,11 @@ export default function Header() {
            </View>
            <View style={styles.spacer} />
            <View style={styles.iconsContainer}>
-             <View style={styles.iconWrapper}><Ionicons name="notifications-outline" size={20} color="white" /></View>
-             <View style={styles.iconWrapper}><Ionicons name="settings-outline" size={20} color="white" /></View>
+             <View style={styles.iconWrapper}><Ionicons name="notifications-outline" size={20} color="white" style={styles.disabledIcon} /></View>
+             <View style={styles.iconWrapper}><Ionicons name="settings-outline" size={20} color="white" style={styles.disabledIcon} /></View>
            </View>
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -37,30 +38,19 @@ export default function Header() {
 const styles = StyleSheet.create({
   statusBarArea: {
     backgroundColor: "#83af8a",
+    width: "100%"
   },
   headerWrapper: {
-    backgroundColor: "#f8f8f8",
-    paddingTop: 20,
-    paddingBottom: 8,
+    backgroundColor: "#83af8a",
+    width: "100%",
   },
   container: {
     backgroundColor: "#83af8a",
-    paddingTop: 12,
-    paddingHorizontal: 12,
-    paddingBottom: 12,
+    paddingTop: 5,
+    paddingHorizontal: 16,
+    paddingBottom: 3,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 12,
-    marginHorizontal: 10,
-    marginTop: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
   },
   spacer: {
     flex: 1,
@@ -91,5 +81,8 @@ const styles = StyleSheet.create({
   iconWrapper: {
     marginLeft: 15,
     padding: 4,
+  },
+  disabledIcon: {
+    opacity: 0.5,
   }
 });

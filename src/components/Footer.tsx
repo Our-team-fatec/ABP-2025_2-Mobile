@@ -1,29 +1,48 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, SafeAreaView } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, TouchableOpacity } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
 
 export default function Footer() {
+    const navigation = useNavigation();
+
+    const handleNavigateToHome = () => {
+        navigation.navigate("Home" as never);
+    };
+
+    const handleNavigateToCadastroPet = () => {
+        navigation.navigate("CadastroPet" as never);
+    };
+
     return (
         <View style={styles.footerWrapper}>
-            <SafeAreaView style={styles.safeArea}>
+            <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
                 <View style={styles.container}>
+                    <TouchableOpacity 
+                        style={styles.iconWrapper}
+                        onPress={handleNavigateToHome}
+                    >
+                        <AntDesign name="home" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={styles.iconWrapper}
+                        onPress={handleNavigateToCadastroPet}
+                    >
+                        <MaterialCommunityIcons name="dog" size={24} color="black" />
+                    </TouchableOpacity>
                     <View style={styles.iconWrapper}>
-                        <Entypo name="heart-outlined" size={24} color="black" />
+                        <Entypo name="heart-outlined" size={24} color="black" style={styles.disabledIcon} />
                     </View>
                     <View style={styles.iconWrapper}>
-                        <FontAwesome name="stethoscope" size={24} color="black" />
+                        <FontAwesome name="stethoscope" size={24} color="black" style={styles.disabledIcon} />
                     </View>
                     <View style={styles.iconWrapper}>
-                        <FontAwesome name="calendar" size={24} color="black" />
-                    </View>
-                    <View style={styles.iconWrapper}>
-                        <AntDesign name="user-add" size={24} color="black" />
-                    </View>
-                    <View style={styles.iconWrapper}>
-                        <Feather name="map-pin" size={24} color="black" />
+                        <Feather name="map-pin" size={24} color="black" style={styles.disabledIcon} />
                     </View>
                 </View>
             </SafeAreaView>
@@ -64,4 +83,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "500",
     },
+    disabledIcon: {
+        opacity: 0.5,
+    }
 })

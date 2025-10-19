@@ -13,10 +13,11 @@ jest.mock("../src/services/user", () => ({
 }));
 
 describe("Tela de Login", () => {
-  const mockNavigate = jest.fn();
+  const mockReplace = jest.fn();
 
   const mockNavigation = {
-    navigate: mockNavigate,
+    replace: mockReplace,
+    navigate: jest.fn(),
   } as Partial<NativeStackNavigationProp<RootStackParamList, "Login">> as any;
 
   const mockRoute: RouteProp<RootStackParamList, "Login"> = {
@@ -60,7 +61,10 @@ describe("Tela de Login", () => {
     const { getByText, getByPlaceholderText } = setup();
 
     (loginUser as jest.Mock).mockResolvedValue({
-      data: { usuario: { nome: "João Teste" } },
+      data: { 
+        usuario: { nome: "João Teste" },
+        accessToken: "token123"
+      },
     });
 
     fireEvent.changeText(getByPlaceholderText("Digite seu e-mail"), "joao@teste.com");
@@ -74,11 +78,7 @@ describe("Tela de Login", () => {
         senha: "123456",
       });
 
-      expect(Alert.alert).toHaveBeenCalledWith(
-        "Sucesso!",
-        expect.stringContaining("Bem-vindo de volta, João Teste!"),
-        expect.any(Array)
-      );
+      expect(mockReplace).toHaveBeenCalledWith("Home");
     });
   });
 
@@ -102,7 +102,7 @@ describe("Tela de Login", () => {
 
     fireEvent.press(getByText("Criar conta"));
 
-    expect(mockNavigate).toHaveBeenCalledWith("Cadastro");
+    expect(mockNavigation.navigate).toHaveBeenCalledWith("Cadastro");
   });
 
   it("deve alternar a visibilidade da senha ao clicar no ícone de olho", () => {

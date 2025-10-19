@@ -13,15 +13,18 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useForm, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { loginUser } from "../../services/user";
 import { LoginForm as Form, loginSchema as Schema } from "../../schemas/login";
 import { loginStyles as styles } from "../../styles/login";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { TOKEN_LOCAL_STORAGE_KEY } from "../../constants/local-storage";
 
 type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
+  Home: undefined;
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
@@ -42,12 +45,14 @@ export default function Login({ navigation }: Props) {
     try {
       const response = await loginUser(data);
 
-      Alert.alert("Sucesso!", `Bem-vindo de volta, ${response.data.usuario.nome}!`, [
-        {
-          text: "OK",
-          onPress: () => console.log("Usuário logado:", response),
-        },
-      ]);
+      // Salva o token no AsyncStorage
+      await AsyncStorage.setItem(
+        TOKEN_LOCAL_STORAGE_KEY,
+        response.data.accessToken
+      );
+
+      // Navega para a tela Home
+      navigation.replace("Home");
     } catch (error) {
       const mensagemErro =
         error instanceof Error

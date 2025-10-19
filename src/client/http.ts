@@ -52,6 +52,7 @@ export async function http<T>(
   // Log da requisição em desenvolvimento
   if (DEBUG_CONFIG.LOG_API_CALLS) {
     console.log(`🌐 API Call: ${options.method || 'GET'} ${url}`);
+    console.log(`📍 BASE_URL: ${API_CONFIG.BASE_URL}`);
     if (options.body) {
       console.log('📤 Request Body:', options.body);
     }
