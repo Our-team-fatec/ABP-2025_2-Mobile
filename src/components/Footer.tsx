@@ -40,7 +40,7 @@ export default function Footer() {
                         <MaterialCommunityIcons name="dog" size={24} color="black" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.iconWrapper} onPress={handleNavigateToAdocao}>
-                        <Entypo name="heart-outlined" size={24} color="black" style={styles.disabledIcon} />
+                        <MaterialCommunityIcons name="paw" size={24} color="black" />
                     </TouchableOpacity>
                     <View style={styles.iconWrapper}>
                         <FontAwesome name="stethoscope" size={24} color="black" style={styles.disabledIcon} />

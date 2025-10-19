@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView, Pressable } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView, KeyboardAvoidingView, Platform, Pressable } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -11,7 +11,7 @@ export default function Adocoes() {
   const [selectedCategory, setSelectedCategory] = useState('todos');
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.screenContainer}>
       <Header/>
       <ScrollView 
         style={styles.mainScrollView}
@@ -22,20 +22,20 @@ export default function Adocoes() {
           <Text style={styles.title}>Central de Adoções</Text>
           <Text style={styles.subtitle}>Encontre seu novo melhor amigo</Text>
         </View>
-      <View style={styles.containerCard}>
-        <View style={styles.styleCardPets}>
-          <View style={styles.iconCircleHeart}>
-            <MaterialIcons name="favorite" size={24} color="#74a57f" />
+        <View style={styles.containerCard}>
+          <View style={styles.styleCardPets}>
+            <View style={styles.iconCircleHeart}>
+              <MaterialCommunityIcons name="paw" size={24} color="#74a57f" />
+            </View>
+            <Text style={styles.cardText}>{"\n"} Pets Disponíveis</Text>
           </View>
-          <Text style={styles.cardText}>{"\n"} Pets Disponíveis</Text>
-        </View>
-        <View style={styles.styleCardAdocoes}>
-          <View style={styles.iconCircleCheck}>
-            <MaterialIcons name="check-circle" size={24} color="#3f3f3fff" />
+          <View style={styles.styleCardAdocoes}>
+            <View style={styles.iconCircleCheck}>
+              <MaterialIcons name="check-circle" size={24} color="#3f3f3fff" />
+            </View>
+            <Text style={styles.cardText}>{"\n"} Minhas Adoções</Text>
           </View>
-          <Text style={styles.cardText}>{"\n"} Minhas Adoções</Text>
         </View>
-      </View>
       <View style={styles.containerBar}>
         <TouchableOpacity 
           style={[
@@ -227,12 +227,12 @@ export default function Adocoes() {
         </Pressable>
       </ScrollView>
       <Footer/>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  screenContainer: {
     flex: 1,
     backgroundColor: "#fafcfa",
   },
