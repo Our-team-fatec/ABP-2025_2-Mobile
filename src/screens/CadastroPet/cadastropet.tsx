@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import {View,Text,TextInput,TouchableOpacity,StyleSheet,Alert,Image,Pressable,ScrollView,Modal,KeyboardAvoidingView,Platform} from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 interface ActionButtonProps {
 label: string;
@@ -172,13 +174,15 @@ export default function CadastroPet() {
 
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-        {/* Título */}
-        <Text style={styles.sectionTitle}>Meus Pets</Text>
-        <Text style={styles.sectionSubtitle}>
-          Gerencie o RG Digital dos seus pets
-        </Text>
+    <View style={styles.screenContainer}>
+      <Header />
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+          {/* Título */}
+          <Text style={styles.sectionTitle}>Meus Pets</Text>
+          <Text style={styles.sectionSubtitle}>
+            Gerencie o RG Digital dos seus pets
+          </Text>
 
         {/* campo de busca */}
         <TextInput
@@ -471,15 +475,13 @@ export default function CadastroPet() {
 
                     <View style={styles.modalField}>
                       <Text style={styles.modalLabel}>Idade *</Text>
-                      <View style={styles.inputWithIcon}>
-                        <MaterialIcons name="event" size={18} color="#6b7280" />
-                        <TextInput
-                          style={styles.inputWithIconText}
-                          placeholder="Digite a idade"
-                          value={newPetData.age}
-                          onChangeText={(text) => handleNewPetChange("birthDate", text)}
-                        />
-                      </View>
+                      <TextInput
+                        style={styles.modalInput}
+                        placeholder="Digite a idade"
+                        value={newPetData.birthDate}
+                        onChangeText={(text) => handleNewPetChange("birthDate", text)}
+                        keyboardType="numeric"
+                      />
                     </View>
 
                     <View style={styles.modalField}>
@@ -540,11 +542,16 @@ export default function CadastroPet() {
             </KeyboardAvoidingView>
           </View>
         </Modal>
+      </View>
+      <Footer />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fafcfa",

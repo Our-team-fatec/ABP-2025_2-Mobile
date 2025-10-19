@@ -1,14 +1,15 @@
-import React from 'react';
-import { act } from 'react-test-renderer';
-import renderer from 'react-test-renderer';
-import App from '../src/App';
+import React from "react";
+import renderer, { act } from "react-test-renderer";
+import App from "../src/App";
 
-describe('App Component', () => {
-  it('deve renderizar corretamente', () => {
-    let tree;
-    act(() => {
-      tree = renderer.create(<App />).toJSON();
+describe("App Component", () => {
+  it("deve renderizar a tela de Login", async () => {
+    let tree: renderer.ReactTestRenderer | undefined;
+    await act(async () => {
+      tree = renderer.create(<App />);
     });
-    expect(tree).toMatchSnapshot();
+    const instance = tree!.root;
+
+    expect(instance.findByProps({ children: "Fazer Login" })).toBeTruthy();
   });
 });
