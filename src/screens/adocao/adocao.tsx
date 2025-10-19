@@ -12,11 +12,16 @@ export default function Adocoes() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <Header/>  
-      <View style={styles.container}>
-        <Text style={styles.title}>Central de Adoções</Text>
-        <Text style={styles.subtitle}>Encontre seu novo melhor amigo</Text>
-      </View>
+      <Header/>
+      <ScrollView 
+        style={styles.mainScrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.container}>
+          <Text style={styles.title}>Central de Adoções</Text>
+          <Text style={styles.subtitle}>Encontre seu novo melhor amigo</Text>
+        </View>
       <View style={styles.containerCard}>
         <View style={styles.styleCardPets}>
           <View style={styles.iconCircleHeart}>
@@ -130,7 +135,6 @@ export default function Adocoes() {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView style={styles.scrollContainer}>
         <View style={styles.petCard}>
           <View style={styles.petCardImageContainer}>
             <Image style={styles.petCardImage} source={require("../../../assets/cachorro.jpg")}/>
@@ -221,7 +225,7 @@ export default function Adocoes() {
           <Text style={styles.cadastrarPetTitle}>Cadastrar Pet para Adoção</Text>
           <Text style={styles.cadastrarPetSubtitle}>Ajude um pet a encontrar um novo lar</Text>
         </Pressable>
-      </ScrollView>\
+      </ScrollView>
       <Footer/>
     </SafeAreaView>
   );
@@ -451,10 +455,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#333",
   },
-  scrollContainer: {
+  mainScrollView: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingBottom: 80,
+  },
+  scrollContent: {
+    paddingBottom: 90,
   },
   petCard:{
     backgroundColor: "#fff",
@@ -462,6 +467,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     marginTop: 10,
+    marginHorizontal: 10,
     marginBottom: 20,
     overflow: "hidden",
     shadowColor: "#000",
@@ -692,6 +698,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
+    marginHorizontal: 10,
     marginBottom: 20,
   },
   plusIcon: {
