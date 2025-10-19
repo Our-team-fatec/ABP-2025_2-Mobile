@@ -19,6 +19,10 @@ export default function Footer() {
         navigation.navigate("CadastroPet" as never);
     };
 
+    const handleNavigateToAdocao = () => {
+        navigation.navigate("Adocao" as never)
+    }
+
     return (
         <View style={styles.footerWrapper}>
             <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
@@ -35,9 +39,9 @@ export default function Footer() {
                     >
                         <MaterialCommunityIcons name="dog" size={24} color="black" />
                     </TouchableOpacity>
-                    <View style={styles.iconWrapper}>
+                    <TouchableOpacity style={styles.iconWrapper} onPress={handleNavigateToAdocao}>
                         <Entypo name="heart-outlined" size={24} color="black" style={styles.disabledIcon} />
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.iconWrapper}>
                         <FontAwesome name="stethoscope" size={24} color="black" style={styles.disabledIcon} />
                     </View>
