@@ -3,26 +3,15 @@ import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
 
-interface PetStatus {
-  label: string;
-  type: "vacinacao" | "consulta" | "aviso" | "pendente";
-}
+import type { PetData, PetStatusType } from '../types/pet';
 
 interface PetCardProps {
-  pet: {
-    name: string;
-    breed: string;
-    gender: string;
-    age: string;
-    weight?: string;
-    image: any;
-    status?: PetStatus[];
-  };
+  pet: PetData;
   onView: () => void;
 }
 
 export default function PetCard({ pet, onView }: PetCardProps) {
-  const getStatusStyle = (status: PetStatus["type"]) => {
+  const getStatusStyle = (status: PetStatusType | undefined) => {
     switch (status) {
       case "vacinacao":
         return styles.petSucess;
@@ -39,17 +28,15 @@ export default function PetCard({ pet, onView }: PetCardProps) {
 
   return (
     <View style={styles.card}>
-      {/* Foto do pet */}
-      <Image source={pet.image} style={styles.petImage} />
-
-      {/* Conteúdo principal */}
+      <Image
+        source={pet.image?.url ? { uri: pet.image.url } : undefined}
+        style={styles.petImage}
+      />
       <View style={{ flex: 1 }}>
-        {/* Cabeçalho do card */}
         <View style={styles.petHeader}>
           <Text style={styles.petName}>{pet.name}</Text>
 
           <View style={styles.petActions}>
-            {/* Botão Editar */}
             <Pressable
               style={({ pressed, hovered }: any) => [
                 styles.iconButton,
@@ -62,8 +49,6 @@ export default function PetCard({ pet, onView }: PetCardProps) {
             >
               <MaterialIcons name="edit" size={16} color="#111827" />
             </Pressable>
-
-            {/* Botão Compartilhar */}
             <Pressable
               style={({ pressed, hovered }: any) => [
                 styles.iconButton,
@@ -78,13 +63,12 @@ export default function PetCard({ pet, onView }: PetCardProps) {
           </View>
         </View>
 
-        {/* Informações básicas */}
         <Text style={styles.petInfo}>
           {pet.breed} • {pet.gender} • {pet.age}
           {pet.weight ? ` • ${pet.weight}` : ""}
+          {pet.color ? ` • ${pet.color}` : ""}
         </Text>
 
-        {/* Lista de status */}
         {pet.status && pet.status.length > 0 ? (
           pet.status.map((s, i) => (
             <Text key={i} style={[styles.petStatus, getStatusStyle(s.type)]}>
@@ -97,8 +81,7 @@ export default function PetCard({ pet, onView }: PetCardProps) {
           </Text>
         )}
       </View>
-
-      {/* Botão "Ver" */}
+      
       <TouchableOpacity style={styles.viewButton} onPress={onView}>
         <MaterialIcons name="description" color="#74a57f" />
         <Text style={styles.viewText}>Ver</Text>

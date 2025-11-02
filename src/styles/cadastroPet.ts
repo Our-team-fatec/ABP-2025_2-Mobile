@@ -520,4 +520,58 @@ export const cadastroPetStyles = StyleSheet.create({
   modalButtonDisabledLabel: {
     color: "#e5e7eb",
   },
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#666",
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  errorText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#ff6b6b",
+    textAlign: "center",
+  },
+  retryButton: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: "#74a57e",
+    borderRadius: 5,
+  },
+  retryButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  emptyText: {
+    marginTop: 10,
+    fontSize: 18,
+    color: "#333",
+    textAlign: "center",
+    fontWeight: "500",
+  },
+  emptySubtext: {
+    marginTop: 5,
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+  }
 });

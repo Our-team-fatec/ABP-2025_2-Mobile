@@ -1,5 +1,3 @@
-// components/ViewPetModal.tsx
-
 import React from "react";
 import {
   Modal,
@@ -15,16 +13,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
 
-interface PetData {
-  name: string;
-  species: string;
-  breed: string;
-  age: string;
-  weight?: string;
-  gender: string;
-  status: Array<string | { label: string; type?: string }>;
-  image?: any;
-}
+import type { PetData } from '../types/pet';
 
 interface ViewPetModalProps {
   visible: boolean;
@@ -58,13 +47,13 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator
               >
-                {/* Foto do Pet */}
+
                 <View style={styles.sectionCard}>
                   <Text style={styles.sectionTitleModal}>Foto do Pet</Text>
-                  {pet.image ? (
+                  {pet.image?.url ? (
                     <View style={styles.photoCircle}>
                       <Image
-                        source={pet.image}
+                        source={{ uri: pet.image.url }}
                         style={{ width: 80, height: 80, borderRadius: 40 }}
                         resizeMode="cover"
                       />
@@ -109,6 +98,13 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                     <View style={styles.modalField}>
                       <Text style={styles.modalLabel}>Peso</Text>
                       <Text style={styles.modalInput}>{pet.weight}</Text>
+                    </View>
+                  )}
+
+                  {pet.color && (
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Cor</Text>
+                      <Text style={styles.modalInput}>{pet.color}</Text>
                     </View>
                   )}
                 </View>
