@@ -9,63 +9,92 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
-import { NewPetForm } from "../types/cadastroPet";
+import { formStyles } from "../styles/form";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { petSchema, type PetForm } from "../schemas/pet";
 
 interface AddPetModalProps {
   visible: boolean;
   onClose: () => void;
-  // Controlled form props
-  newPetData: NewPetForm;
-  onChange: <K extends keyof NewPetForm>(
-    field: K,
-    value: NewPetForm[K]
-  ) => void;
-  onSubmit: () => boolean;
-  isFormValid: boolean;
-  onSelectSpecies?: (species: string) => void;
+  onSubmit: (data: PetForm) => Promise<boolean>;
   isSpeciesDropdownOpen?: boolean;
   setIsSpeciesDropdownOpen?: (open: boolean) => void;
+  isSizeDropdownOpen?: boolean;
+  setIsSizeDropdownOpen?: (open: boolean) => void;
 }
 
 const speciesOptions = [
-  "Cão",
-  "Gato",
+  "CACHORRO",
+  "GATO",
 ];
+
+const sizeOptions = ["PEQUENO", "MEDIO", "GRANDE"] as const;
 
 const AddPetModal: React.FC<AddPetModalProps> = ({
   visible,
   onClose,
-  newPetData,
-  onChange,
   onSubmit,
-  isFormValid,
-  onSelectSpecies,
   isSpeciesDropdownOpen = false,
   setIsSpeciesDropdownOpen = () => {},
+  isSizeDropdownOpen = false,
+  setIsSizeDropdownOpen = () => {},
 }) => {
-  const handleSelectSpecies = (species: string) => {
-    if (onSelectSpecies) {
-      onSelectSpecies(species);
-    } else {
-      onChange("species", species);
-      setIsSpeciesDropdownOpen(false);
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(petSchema),
+    mode: "onBlur",
+    defaultValues: {
+      nome: "",
+      especie: "CACHORRO",
+      raca: "",
+      genero: "MACHO" as const,
+      dataNascimento: "",
+      cor: "",
+      porte: "MEDIO" as const,
+      castrado: false,
+      observacoes: "",
     }
+  });
+
+  const formData = watch();
+
+  const handleSelectSpecies = (especie: string) => {
+    setValue("especie", especie);
+    setIsSpeciesDropdownOpen(false);
   };
 
-  const handleSelectGender = (gender: "male" | "female") => {
-    onChange("gender", gender);
+  const handleSelectSize = (porte: "PEQUENO" | "MEDIO" | "GRANDE") => {
+    setValue("porte", porte);
+    setIsSizeDropdownOpen(false);
+  };
+
+  const handleSelectGender = (genero: "MACHO" | "FEMEA") => {
+    setValue("genero", genero);
   };
 
   const handleToggleNeutered = () => {
-    onChange("isNeutered", !newPetData.isNeutered);
+    setValue("castrado", !formData.castrado);
   };
-  const handleSubmit = () => {
-    const ok = onSubmit();
-    if (ok) onClose();
-  };
+
+  const handleFormSubmit = handleSubmit(async (data) => {
+    try {
+      const ok = await onSubmit(data);
+      if (ok) onClose();
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro", "Não foi possível salvar o pet. Tente novamente.");
+    }
+  });
 
   return (
     <Modal
@@ -129,152 +158,301 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
 
                 <View style={styles.modalField}>
                   <Text style={styles.modalLabel}>Nome do Pet *</Text>
-                  <TextInput
-                    style={styles.modalInput}
-                    placeholder="Ex: Buddy"
-                    value={newPetData.name}
-                    onChangeText={(text) => onChange("name", text)}
+                  <Controller
+                    control={control}
+                    name="nome"
+                    render={({ field: { onChange, value } }) => (
+                      <TextInput
+                        style={[styles.modalInput, errors.nome && formStyles.inputError]}
+                        placeholder="Ex: Buddy"
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                    )}
                   />
+                  {errors.nome && (
+                    <Text style={styles.errorText}>{errors.nome.message}</Text>
+                  )}
                 </View>
 
                 <View style={styles.modalField}>
                   <Text style={styles.modalLabel}>Espécie *</Text>
                   <View style={styles.selectContainer}>
-                    <Pressable
-                      style={styles.selectTrigger}
-                      onPress={() => setIsSpeciesDropdownOpen(!isSpeciesDropdownOpen)}
-                    >
-                      <Text
-                        style={[
-                          styles.selectTriggerText,
-                          !newPetData.species && styles.selectPlaceholder,
-                        ]}
-                      >
-                        {newPetData.species || "Selecione"}
-                      </Text>
-                      <MaterialIcons
-                        name={
-                          isSpeciesDropdownOpen ? "expand-less" : "expand-more"
-                        }
-                        size={20}
-                        color="#047857"
-                      />
-                    </Pressable>
-                    {isSpeciesDropdownOpen && (
-                      <View style={styles.selectDropdown}>
-                        {speciesOptions.map((option) => (
+                    <Controller
+                      control={control}
+                      name="especie"
+                      render={({ field: { value } }) => (
+                        <>
                           <Pressable
-                            key={option}
                             style={[
-                              styles.selectOption,
-                              newPetData.species === option &&
-                                styles.selectOptionActive,
+                              styles.selectTrigger,
+                              errors.especie && formStyles.inputError,
                             ]}
-                            onPress={() => handleSelectSpecies(option)}
+                            onPress={() =>
+                              setIsSpeciesDropdownOpen(!isSpeciesDropdownOpen)
+                            }
                           >
                             <Text
                               style={[
-                                styles.selectOptionText,
-                                newPetData.species === option &&
-                                  styles.selectOptionTextActive,
+                                styles.selectTriggerText,
+                                !value && styles.selectPlaceholder,
                               ]}
                             >
-                              {option}
+                              {value || "Selecione"}
                             </Text>
+                            <MaterialIcons
+                              name={
+                                isSpeciesDropdownOpen
+                                  ? "expand-less"
+                                  : "expand-more"
+                              }
+                              size={20}
+                              color="#047857"
+                            />
                           </Pressable>
-                        ))}
-                      </View>
+                          {isSpeciesDropdownOpen && (
+                            <View style={styles.selectDropdown}>
+                              {speciesOptions.map((option) => (
+                                <Pressable
+                                  key={option}
+                                  style={[
+                                    styles.selectOption,
+                                    value === option &&
+                                      styles.selectOptionActive,
+                                  ]}
+                                  onPress={() => handleSelectSpecies(option)}
+                                >
+                                  <Text
+                                    style={[
+                                      styles.selectOptionText,
+                                      value === option &&
+                                        styles.selectOptionTextActive,
+                                    ]}
+                                  >
+                                    {option}
+                                  </Text>
+                                </Pressable>
+                              ))}
+                            </View>
+                          )}
+                        </>
+                      )}
+                    />
+                    {errors.especie && (
+                      <Text style={formStyles.errorText}>
+                        {errors.especie.message}
+                      </Text>
                     )}
                   </View>
                 </View>
 
                 <View style={styles.modalField}>
                   <Text style={styles.modalLabel}>Raça</Text>
-                  <TextInput
-                    style={styles.modalInput}
-                    placeholder="Ex: Golden Retriever"
-                    value={newPetData.breed}
-                    onChangeText={(text) => onChange("breed", text)}
+                  <Controller
+                    control={control}
+                    name="raca"
+                    render={({ field: { onChange, value } }) => (
+                      <TextInput
+                        style={[styles.modalInput, errors.raca && formStyles.inputError]}
+                        placeholder="Ex: Golden Retriever"
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                    )}
                   />
                 </View>
 
                 <View style={styles.modalField}>
                   <Text style={styles.modalLabel}>Sexo *</Text>
-                  <View style={styles.genderRow}>
-                    <Pressable
-                      style={[
-                        styles.genderOption,
-                        newPetData.gender === "male" &&
-                          styles.genderOptionActive,
-                      ]}
-                      onPress={() => handleSelectGender("male")}
-                    >
-                      <View
-                        style={[
-                          styles.genderRadio,
-                          newPetData.gender === "male" &&
-                            styles.genderRadioActive,
-                        ]}
-                      />
-                      <Text style={styles.genderLabel}>Macho</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[
-                        styles.genderOption,
-                        newPetData.gender === "female" &&
-                          styles.genderOptionActive,
-                      ]}
-                      onPress={() => handleSelectGender("female")}
-                    >
-                      <View
-                        style={[
-                          styles.genderRadio,
-                          newPetData.gender === "female" &&
-                            styles.genderRadioActive,
-                        ]}
-                      />
-                      <Text style={styles.genderLabel}>Fêmea</Text>
-                    </Pressable>
-                  </View>
+                  <Controller
+                    control={control}
+                    name="genero"
+                    render={({ field: { value } }) => (
+                      <View style={styles.genderRow}>
+                        <Pressable
+                          style={[
+                            styles.genderOption,
+                            value === "MACHO" && styles.genderOptionActive,
+                            errors.genero && formStyles.inputError
+                          ]}
+                          onPress={() => handleSelectGender("MACHO")}
+                        >
+                          <View
+                            style={[
+                              styles.genderRadio,
+                              value === "MACHO" && styles.genderRadioActive,
+                            ]}
+                          />
+                          <Text style={styles.genderLabel}>Macho</Text>
+                        </Pressable>
+                        <Pressable
+                          style={[
+                            styles.genderOption,
+                            value === "FEMEA" && styles.genderOptionActive,
+                            errors.genero && formStyles.inputError
+                          ]}
+                          onPress={() => handleSelectGender("FEMEA")}
+                        >
+                          <View
+                            style={[
+                              styles.genderRadio,
+                              value === "FEMEA" && styles.genderRadioActive,
+                            ]}
+                          />
+                          <Text style={styles.genderLabel}>Fêmea</Text>
+                        </Pressable>
+                      </View>
+                    )}
+                  />
+                  {errors.genero && (
+                    <Text style={formStyles.errorText}>
+                      {errors.genero.message}
+                    </Text>
+                  )}
                 </View>
 
                 <View style={styles.modalField}>
                   <Text style={styles.modalLabel}>Idade *</Text>
-                  <TextInput
-                    style={styles.modalInput}
-                    placeholder="Digite a idade"
-                    value={newPetData.birthDate}
-                    onChangeText={(text) => onChange("birthDate", text)}
-                    keyboardType="numeric"
+                  <Controller
+                    control={control}
+                    name="dataNascimento"
+                    render={({ field: { onChange, value } }) => (
+                      <TextInput
+                        style={[
+                          styles.modalInput,
+                          errors.dataNascimento && formStyles.inputError,
+                        ]}
+                        placeholder="Digite a idade"
+                        value={value}
+                        onChangeText={onChange}
+                        keyboardType="numeric"
+                      />
+                    )}
                   />
+                  {errors.dataNascimento && (
+                    <Text style={formStyles.errorText}>
+                      {errors.dataNascimento.message}
+                    </Text>
+                  )}
                 </View>
 
                 <View style={styles.modalField}>
                   <Text style={styles.modalLabel}>Cor</Text>
-                  <TextInput
-                    style={styles.modalInput}
-                    placeholder="Ex: Dourado"
-                    value={newPetData.color}
-                    onChangeText={(text) => onChange("color", text)}
+                  <Controller
+                    control={control}
+                    name="cor"
+                    render={({ field: { onChange, value } }) => (
+                      <TextInput
+                        style={[
+                          styles.modalInput,
+                          errors.cor && formStyles.inputError,
+                        ]}
+                        placeholder="Ex: Dourado"
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                    )}
                   />
+                  {errors.cor && (
+                    <Text style={formStyles.errorText}>
+                      {errors.cor.message}
+                    </Text>
+                  )}
                 </View>
 
-                <Pressable
-                  style={styles.checkboxRow}
-                  onPress={handleToggleNeutered}
-                >
-                  <View
-                    style={[
-                      styles.checkboxBox,
-                      newPetData.isNeutered && styles.checkboxBoxChecked,
-                    ]}
-                  >
-                    {newPetData.isNeutered && (
-                      <MaterialIcons name="check" size={14} color="#fff" />
+                <View style={styles.modalField}>
+                  <Text style={styles.modalLabel}>Porte *</Text>
+                  <View style={styles.selectContainer}>
+                    <Controller
+                      control={control}
+                      name="porte"
+                      render={({ field: { value } }) => (
+                        <>
+                          <Pressable
+                            style={[
+                              styles.selectTrigger,
+                              errors.porte && formStyles.inputError,
+                            ]}
+                            onPress={() =>
+                              setIsSizeDropdownOpen(!isSizeDropdownOpen)
+                            }
+                          >
+                            <Text
+                              style={[
+                                styles.selectTriggerText,
+                                !value && styles.selectPlaceholder,
+                              ]}
+                            >
+                              {value || "Selecione"}
+                            </Text>
+                            <MaterialIcons
+                              name={
+                                isSizeDropdownOpen
+                                  ? "expand-less"
+                                  : "expand-more"
+                              }
+                              size={20}
+                              color="#047857"
+                            />
+                          </Pressable>
+                          {isSizeDropdownOpen && (
+                            <View style={styles.selectDropdown}>
+                              {sizeOptions.map((option) => (
+                                <Pressable
+                                  key={option}
+                                  style={[
+                                    styles.selectOption,
+                                    value === option &&
+                                      styles.selectOptionActive,
+                                  ]}
+                                  onPress={() => handleSelectSize(option)}
+                                >
+                                  <Text
+                                    style={[
+                                      styles.selectOptionText,
+                                      value === option &&
+                                        styles.selectOptionTextActive,
+                                    ]}
+                                  >
+                                    {option}
+                                  </Text>
+                                </Pressable>
+                              ))}
+                            </View>
+                          )}
+                        </>
+                      )}
+                    />
+                    {errors.porte && (
+                      <Text style={formStyles.errorText}>
+                        {errors.porte.message}
+                      </Text>
                     )}
                   </View>
-                  <Text style={styles.checkboxLabel}>Castrado</Text>
-                </Pressable>
+                </View>
+
+                <Controller
+                  control={control}
+                  name="castrado"
+                  render={({ field: { value } }) => (
+                    <Pressable
+                      style={styles.checkboxRow}
+                      onPress={handleToggleNeutered}
+                    >
+                      <View
+                        style={[
+                          styles.checkboxBox,
+                          value && styles.checkboxBoxChecked,
+                        ]}
+                      >
+                        {value && (
+                          <MaterialIcons name="check" size={14} color="#fff" />
+                        )}
+                      </View>
+                      <Text style={styles.checkboxLabel}>Castrado</Text>
+                    </Pressable>
+                  )}
+                />
               </View>
             </ScrollView>
 
@@ -293,22 +471,22 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={handleSubmit}
-                disabled={!isFormValid}
+                onPress={handleFormSubmit}
+                disabled={isSubmitting}
                 style={[
                   styles.modalButton,
                   styles.modalPrimaryButton,
-                  !isFormValid && styles.modalButtonDisabled,
+                  isSubmitting && styles.modalButtonDisabled,
                 ]}
               >
                 <Text
                   style={[
                     styles.modalButtonLabel,
                     styles.modalPrimaryButtonLabel,
-                    !isFormValid && styles.modalButtonDisabledLabel,
+                    isSubmitting && styles.modalButtonDisabledLabel,
                   ]}
                 >
-                  Salvar pet
+                  {isSubmitting ? "Salvando..." : "Salvar pet"}
                 </Text>
               </TouchableOpacity>
               </View>   

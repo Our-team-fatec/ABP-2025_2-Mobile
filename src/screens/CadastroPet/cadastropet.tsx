@@ -9,8 +9,9 @@ import ViewPetModal from "../../components/ViewPetModal";
 import type { PetData } from "../../types/pet";
 import PetCard from "../../components/PetCard";
 import { useNewPetForm } from "../../hooks/useNewPetForm";
-import { getPublicPets, type Pet } from "../../services/pet";
+import { getPublicPets, createPet, type Pet } from "../../services/pet";
 import { cadastroPetStyles as styles } from "../../styles/cadastroPet";
+import { type PetForm } from "../../schemas/pet";
 
 export default function CadastroPet() {
   const [search, setSearch] = useState("");
@@ -64,17 +65,30 @@ export default function CadastroPet() {
     "Gato",
   ];
 
-  const { newPetData, handleNewPetChange, handleSubmit, isFormValid } =
-    useNewPetForm();
+  const handleSubmitPet = async (data: PetForm) => {
+    try {
+      // Converte os dados do formulário para o formato da API
+      await createPet({
+        nome: data.nome,
+        especie: data.especie === "Cão" ? "CACHORRO" : "GATO",
+        raca: data.raca ?? "",
+        genero: data.genero,
+        porte: "MEDIO", // TODO: Adicionar campo de porte no formulário
+        cor: data.cor ?? "",
+      });
+      
+      // Recarrega a lista de pets após criar um novo
+      loadPets();
+      return true;
+    } catch (error) {
+      console.error("Erro ao criar pet:", error);
+      return false;
+    }
+  };
 
   const handleOpenAddModal = () => {
     setIsAddModalVisible(true);
     setIsAddHover(false);
-    setIsSpeciesDropdownOpen(false);
-  };
-
-  const handleSelectSpecies = (option: string) => {
-    handleNewPetChange("species", option);
     setIsSpeciesDropdownOpen(false);
   };
 
@@ -194,11 +208,7 @@ export default function CadastroPet() {
         <AddPetModal
           visible={isAddModalVisible}
           onClose={() => setIsAddModalVisible(false)}
-          newPetData={newPetData}
-          onChange={handleNewPetChange}
-          onSubmit={handleSubmit}
-          isFormValid={isFormValid}
-          onSelectSpecies={handleSelectSpecies}
+          onSubmit={handleSubmitPet}
           isSpeciesDropdownOpen={isSpeciesDropdownOpen}
           setIsSpeciesDropdownOpen={setIsSpeciesDropdownOpen}
         />

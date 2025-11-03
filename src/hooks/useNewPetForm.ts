@@ -3,9 +3,9 @@ import { initialNewPetData, NewPetForm, PetGender } from "../types/cadastroPet";
 
 /**
  * Gerencia o estado do formulário de novo pet.
- * - onSubmit (opcional): callback chamada quando o formulário é válido e submetido.
+ * - onSubmit (opcional): callback assíncrona chamada quando o formulário é válido e submetido.
  */
-export function useNewPetForm(onSubmit?: (data: NewPetForm) => void) {
+export function useNewPetForm(onSubmit?: (data: NewPetForm) => Promise<boolean>) {
   const [newPetData, setNewPetData] = useState<NewPetForm>(initialNewPetData);
 
   const handleNewPetChange = <K extends keyof NewPetForm>(
@@ -38,9 +38,11 @@ export function useNewPetForm(onSubmit?: (data: NewPetForm) => void) {
    * Submete o formulário se válido. Retorna true/false.
    * Não exibe Alert: responsabilidade da camada de UI.
    */
-  const submit = () => {
+  const submit = async () => {
     if (!isFormValid) return false;
-    onSubmit?.(newPetData);
+    if (onSubmit) {
+      return await onSubmit(newPetData);
+    }
     return true;
   };
 
