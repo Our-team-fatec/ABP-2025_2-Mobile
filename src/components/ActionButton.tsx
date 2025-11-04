@@ -6,9 +6,10 @@ import { cadastroPetStyles as styles } from "../styles/cadastroPet";
 interface ActionButtonProps {
   label: string;
   icon?: keyof typeof MaterialIcons.glyphMap;
-  variant?: "default" | "danger" | "add" | "lost" | "mypet";
+  variant?: "default" | "danger" | "add" | "lost" | "mypet" | "adoption";
   active?: boolean;
   color?: string;
+  customColor?: string;
   onPress?: () => void;
 }
 
@@ -17,15 +18,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   icon,
   variant = "default",
   color,
+  customColor,
   active = false,
   onPress,
 }) => {
-  const baseColor =
+  const baseColor = customColor ??
     color ??
     (variant === "danger"
       ? "#b91c1c"
       : variant === "add"
       ? "#0f766e"
+      : variant === "adoption"
+      ? "#e07b7b"
       : "#047857");
 
   return (
@@ -37,8 +41,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         variant === "add" && styles.addButton,
         variant === "lost" && styles.lostButton,
         variant === "mypet" && styles.mypetButton,
+        variant === "adoption" && styles.adoptionButton,
         active &&
-          (variant === "lost" ? styles.activeLostButton : styles.activeButton),
+          (variant === "lost" 
+            ? styles.activeLostButton 
+            : variant === "adoption"
+            ? styles.activeAdoptionButton
+            : styles.activeButton),
         pressed && styles.pressedButton,
       ]}
     >
@@ -51,7 +60,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             style={styles.actionIcon}
           />
         )}
-        <Text style={styles.actionText}>{label}</Text>
+        <Text style={[styles.actionText, customColor && { color: baseColor }]}>{label}</Text>
       </View>
     </Pressable>
   );

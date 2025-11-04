@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, Pressable, Modal, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
 
@@ -7,10 +7,15 @@ import type { PetData, PetStatusType } from '../types/pet';
 
 interface PetCardProps {
   pet: PetData;
+  petId?: string;
   onView: () => void;
+  onDelete?: (petId: string) => void;
+  onEdit?: () => void;
 }
 
-export default function PetCard({ pet, onView }: PetCardProps) {
+export default function PetCard({ pet, petId, onView, onDelete, onEdit }: PetCardProps) {
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
   const getStatusStyle = (status: PetStatusType | undefined) => {
     switch (status) {
       case "vacinacao":
@@ -24,6 +29,21 @@ export default function PetCard({ pet, onView }: PetCardProps) {
       default:
         return {};
     }
+  };
+
+  const handleDeletePress = () => {
+    setIsDeleteModalVisible(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setIsDeleteModalVisible(false);
+    if (onDelete && petId) {
+      onDelete(petId);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalVisible(false);
   };
 
   return (
@@ -45,7 +65,7 @@ export default function PetCard({ pet, onView }: PetCardProps) {
                 pressed && styles.iconButtonPressed,
               ]}
               hitSlop={8}
-              onPress={() => {}}
+              onPress={onEdit}
             >
               <MaterialIcons name="edit" size={16} color="#111827" />
             </Pressable>
@@ -56,9 +76,9 @@ export default function PetCard({ pet, onView }: PetCardProps) {
                 pressed && styles.iconButtonPressed,
               ]}
               hitSlop={8}
-              onPress={() => {}}
+              onPress={handleDeletePress}
             >
-              <MaterialIcons name="share" size={16} color="#111827" />
+              <MaterialIcons name="delete" size={16} color="#ef4444" />
             </Pressable>
           </View>
         </View>
@@ -86,6 +106,46 @@ export default function PetCard({ pet, onView }: PetCardProps) {
         <MaterialIcons name="description" color="#74a57f" />
         <Text style={styles.viewText}>Ver</Text>
       </TouchableOpacity>
+
+      {/* Modal de Confirmação de Exclusão */}
+      <Modal
+        visible={isDeleteModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={handleCancelDelete}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.deleteModalContainer}>
+            <MaterialIcons name="warning" size={48} color="#ef4444" style={styles.deleteModalIcon} />
+            <Text style={styles.deleteModalTitle}>Excluir Pet</Text>
+            <Text style={styles.deleteModalMessage}>
+              Tem certeza que deseja excluir {pet.name}? Esta ação não pode ser desfeita.
+            </Text>
+            <View style={styles.deleteModalButtons}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.deleteModalButton,
+                  styles.deleteCancelButton,
+                  pressed && styles.deleteCancelButtonPressed
+                ]}
+                onPress={handleCancelDelete}
+              >
+                <Text style={styles.deleteCancelButtonText}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.deleteModalButton,
+                  styles.deleteConfirmButton,
+                  pressed && styles.deleteConfirmButtonPressed
+                ]}
+                onPress={handleConfirmDelete}
+              >
+                <Text style={styles.deleteConfirmButtonText}>Excluir</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

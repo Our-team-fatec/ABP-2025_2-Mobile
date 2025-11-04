@@ -180,6 +180,26 @@ export async function createPet(data: CreatePetRequest): Promise<PetResponse> {
 }
 
 /**
+ * Cria um novo pet com FormData (incluindo imagens)
+ * POST /pets
+ */
+export async function createPetWithFormData(formData: FormData): Promise<PetResponse> {
+  try {
+    const response = await http<PetResponse>(API_CONFIG.ENDPOINTS.PETS.BASE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData
+    });
+    return response;
+  } catch (error) {
+    console.error("[PetService] Erro ao criar pet com FormData:", error);
+    throw new Error("Não foi possível criar o pet");
+  }
+}
+
+/**
  * Cria um novo pet com imagens
  * POST /pets/with-images
  */
@@ -227,6 +247,26 @@ export async function updatePet(petId: string, data: UpdatePetRequest): Promise<
     return response;
   } catch (error) {
     console.error("[PetService] Erro ao atualizar pet:", error);
+    throw new Error("Não foi possível atualizar o pet");
+  }
+}
+
+/**
+ * Atualiza um pet existente com FormData (suporta imagens)
+ * PATCH /pets/:id
+ */
+export async function updatePetWithFormData(petId: string, formData: FormData): Promise<PetResponse> {
+  try {
+    const response = await http<PetResponse>(`${API_CONFIG.ENDPOINTS.PETS.BASE}/${petId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData
+    });
+    return response;
+  } catch (error) {
+    console.error("[PetService] Erro ao atualizar pet com FormData:", error);
     throw new Error("Não foi possível atualizar o pet");
   }
 }

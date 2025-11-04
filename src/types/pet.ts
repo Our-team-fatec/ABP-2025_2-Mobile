@@ -24,4 +24,14 @@ export interface PetData {
     atualizado_em: string;
     removido_em: string | null;
   };
+  images?: Array<{
+    id: string;
+    url: string;
+    titulo: string;
+    descricao: string | null;
+    pet_id: string;
+    criado_em: string;
+    atualizado_em: string;
+    removido_em: string | null;
+  }>;
 }

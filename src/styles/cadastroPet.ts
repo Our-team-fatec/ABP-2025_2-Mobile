@@ -99,9 +99,16 @@ export const cadastroPetStyles = StyleSheet.create({
     backgroundColor: "#f1fff8ff",
     borderColor: "#d8fce9ff"
   },
+  adoptionButton: {
+    backgroundColor: "#fff5f5",
+    borderColor: "#fecaca"
+  },
   addButton: {
     backgroundColor: "#ffffffff",
     borderColor: "#d7ffecff"
+  },
+  activeAdoptionButton: {
+    backgroundColor: "#fee2e2",
   },
   pressedButton: {
     transform: [{ scale: 0.98 }],
@@ -573,5 +580,142 @@ export const cadastroPetStyles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     textAlign: "center",
-  }
+  },
+  // Estilos do Modal de Exclusão
+  deleteModalContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 24,
+    width: "90%",
+    maxWidth: 400,
+    alignItems: "center",
+  },
+  deleteModalIcon: {
+    marginBottom: 16,
+  },
+  deleteModalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#111827",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  deleteModalMessage: {
+    fontSize: 14,
+    color: "#6b7280",
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  deleteModalButtons: {
+    flexDirection: "row",
+    gap: 12,
+    width: "100%",
+  },
+  deleteModalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  deleteCancelButton: {
+    backgroundColor: "#f3f4f6",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+  deleteCancelButtonPressed: {
+    backgroundColor: "#e5e7eb",
+  },
+  deleteCancelButtonText: {
+    color: "#374151",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  deleteConfirmButton: {
+    backgroundColor: "#ef4444",
+  },
+  deleteConfirmButtonPressed: {
+    backgroundColor: "#dc2626",
+  },
+  deleteConfirmButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  // Estilos para imagens selecionadas
+  imagesScrollView: {
+    marginVertical: 12,
+  },
+  imageContainer: {
+    position: "relative",
+    marginRight: 12,
+  },
+  selectedImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+  },
+  removeImageButton: {
+    position: "absolute",
+    top: -8,
+    right: -8,
+    backgroundColor: "#ef4444",
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  // Estilos do Carrossel de Imagens
+  imageCarouselContainer: {
+    position: "relative",
+    width: "100%",
+    height: 300,
+    backgroundColor: "#f3f4f6",
+    borderRadius: 12,
+    overflow: "hidden",
+    marginVertical: 12,
+  },
+  carouselImage: {
+    width: "100%",
+    height: "100%",
+  },
+  carouselButton: {
+    position: "absolute",
+    top: "50%",
+    transform: [{ translateY: -20 }],
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  carouselButtonLeft: {
+    left: 10,
+  },
+  carouselButtonRight: {
+    right: 10,
+  },
+  carouselIndicators: {
+    position: "absolute",
+    bottom: 12,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 6,
+  },
+  carouselDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+  },
+  carouselDotActive: {
+    backgroundColor: "#fff",
+    width: 24,
+  },
 });

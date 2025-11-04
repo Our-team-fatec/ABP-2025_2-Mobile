@@ -1,25 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Pressable, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../App';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ActionButton } from "../../components/ActionButton";
 import AddPetModal from "../../components/AddPetModal";
+import EditPetModal from "../../components/EditPetModal";
 import ViewPetModal from "../../components/ViewPetModal";
 import type { PetData } from "../../types/pet";
 import PetCard from "../../components/PetCard";
 import { useNewPetForm } from "../../hooks/useNewPetForm";
-import { getPublicPets, createPet, type Pet } from "../../services/pet";
+import { getPublicPets, createPet, type Pet, listPets, deletePet, createPetWithFormData, updatePet, updatePetWithFormData } from "../../services/pet";
 import { cadastroPetStyles as styles } from "../../styles/cadastroPet";
 import { type PetForm } from "../../schemas/pet";
 
+type CadastroPetRouteProp = RouteProp<RootStackParamList, 'CadastroPet'>;
+
 export default function CadastroPet() {
+  const route = useRoute<CadastroPetRouteProp>();
+  const initialView = route.params?.initialView || 'myPets';
+  
   const [search, setSearch] = useState("");
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(initialView === 'myPets' ? 0 : -1);
   const [isAddHover, setIsAddHover] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
+  const [editingPet, setEditingPet] = useState<Pet | null>(null);
 
   const convertPetToPetData = (pet: Pet): PetData => ({
     name: pet.nome,
@@ -29,6 +39,7 @@ export default function CadastroPet() {
     age: 'Não informada',
     color: pet.cor,
     image: pet.imagens?.[0],
+    images: pet.imagens,
     status: pet.status?.map(s => ({
       label: s.label,
       type: (s.type === 'PENDENTE' ? 'pendente' : 
@@ -44,13 +55,13 @@ export default function CadastroPet() {
 
   useEffect(() => {
     loadPets();
-  }, []);
+  }, [activeIndex]);
 
   const loadPets = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getPublicPets();
+      const response = activeIndex === 0 ? await listPets() : await getPublicPets();
       setPets(response.data.pets);
     } catch (err) {
       console.error(err);
@@ -67,15 +78,34 @@ export default function CadastroPet() {
 
   const handleSubmitPet = async (data: PetForm) => {
     try {
-      // Converte os dados do formulário para o formato da API
-      await createPet({
-        nome: data.nome,
-        especie: data.especie === "Cão" ? "CACHORRO" : "GATO",
-        raca: data.raca ?? "",
-        genero: data.genero,
-        porte: "MEDIO", // TODO: Adicionar campo de porte no formulário
-        cor: data.cor ?? "",
-      });
+      const formData = new FormData();
+      
+      // Adiciona os campos de texto
+      formData.append('nome', data.nome);
+      formData.append('especie', data.especie);
+      formData.append('raca', data.raca || '');
+      formData.append('genero', data.genero);
+      formData.append('porte', data.porte);
+      formData.append('cor', data.cor || '');
+      formData.append('idade', data.idade);
+      
+      // Adiciona as imagens se houver
+      if (data.images && data.images.length > 0) {
+        for (const imageUri of data.images) {
+          const filename = imageUri.split('/').pop() || 'photo.jpg';
+          const match = /\.(\w+)$/.exec(filename);
+          const type = match ? `image/${match[1]}` : 'image/jpeg';
+          
+          formData.append('images', {
+            uri: imageUri,
+            name: filename,
+            type: type,
+          } as any);
+        }
+      }
+      
+      // Envia o FormData
+      await createPetWithFormData(formData);
       
       // Recarrega a lista de pets após criar um novo
       loadPets();
@@ -92,14 +122,85 @@ export default function CadastroPet() {
     setIsSpeciesDropdownOpen(false);
   };
 
+  const handleMyPetsButtonPress = () => {
+    setActiveIndex(activeIndex === 0 ? -1 : 0);
+  };
+
+  const handleAddButtonPress = () => {
+    handleOpenAddModal();
+  };
+
+  const handleDeletePet = async (petId: string) => {
+    try {
+      await deletePet(petId);
+      // Recarrega a lista de pets após excluir
+      loadPets();
+    } catch (error) {
+      console.error("Erro ao excluir pet:", error);
+      setError("Não foi possível excluir o pet");
+    }
+  };
+
+  const handleEditPet = (pet: Pet) => {
+    setEditingPet(pet);
+    setIsEditModalVisible(true);
+  };
+
+  const handleUpdatePet = async (petId: string, data: PetForm) => {
+    try {
+      const formData = new FormData();
+      
+      // Adiciona os campos de texto
+      formData.append('nome', data.nome);
+      formData.append('especie', data.especie);
+      formData.append('raca', data.raca || '');
+      formData.append('genero', data.genero);
+      formData.append('porte', data.porte);
+      formData.append('cor', data.cor || '');
+      formData.append('idade', data.idade);
+      
+      // Adiciona as imagens se houver
+      if (data.images && data.images.length > 0) {
+        for (const imageUri of data.images) {
+          // Verifica se é uma URL (imagem já existente) ou URI local (nova imagem)
+          if (!imageUri.startsWith('http')) {
+            const filename = imageUri.split('/').pop() || 'photo.jpg';
+            const match = /\.(\w+)$/.exec(filename);
+            const type = match ? `image/${match[1]}` : 'image/jpeg';
+            
+            formData.append('images', {
+              uri: imageUri,
+              name: filename,
+              type: type,
+            } as any);
+          }
+        }
+      }
+      
+      // Envia o FormData
+      await updatePetWithFormData(petId, formData);
+      
+      // Recarrega a lista de pets após atualizar
+      loadPets();
+      return true;
+    } catch (error) {
+      console.error("Erro ao atualizar pet:", error);
+      return false;
+    }
+  };
+
   return (
     <View style={styles.screenContainer}>
       <Header />
       <View style={styles.container}>
         <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-          <Text style={styles.sectionTitle}>Meus Pets</Text>
+          <Text style={styles.sectionTitle}>
+            {activeIndex === 0 ? "Meus Pets" : "Pets Disponíveis para Adoção"}
+          </Text>
           <Text style={styles.sectionSubtitle}>
-            Gerencie o RG Digital dos seus pets
+            {activeIndex === 0 
+              ? "Gerencie o RG Digital dos seus pets" 
+              : "Encontre seu novo companheiro"}
           </Text>
           <TextInput
             style={styles.input}
@@ -110,13 +211,14 @@ export default function CadastroPet() {
 
           <View style={styles.actionsRow}>
             <ActionButton
-              label="Meus Pets"
+              label={activeIndex === 0 ? "Adoção" : "Meus Pets"}
               icon="favorite-border"
-              variant="mypet"
-              active={activeIndex === 0}
-              onPress={() => setActiveIndex(0)}
+              variant={activeIndex === 0 ? "adoption" : "mypet"}
+              customColor={activeIndex === 0 ? "#e07b7b" : "#83af8a"}
+              active={activeIndex !== 0}
+              onPress={handleMyPetsButtonPress}
             />
-            <ActionButton
+          {/*   <ActionButton
               label="Registros"
               icon="description"
               active={activeIndex === 1}
@@ -129,13 +231,13 @@ export default function CadastroPet() {
               variant="lost"
               active={activeIndex === 2}
               onPress={() => setActiveIndex(2)}
-            />
+            /> */}
             <ActionButton
-              label="Adicionar"
+              label={activeIndex === 0 ? "Adicionar" : "Doar"}
               icon="add"
               variant="add"
               active={activeIndex === 3}
-              onPress={() => setActiveIndex(3)}
+              onPress={handleAddButtonPress}
             />
           </View>
 
@@ -166,6 +268,7 @@ export default function CadastroPet() {
             .map((pet) => (
               <PetCard
                 key={pet.id}
+                petId={pet.id}
                 pet={{
                   name: pet.nome,
                   breed: pet.raca,
@@ -187,10 +290,12 @@ export default function CadastroPet() {
                   setSelectedPet(convertPetToPetData(pet));
                   setIsViewModalVisible(true);
                 }}
+                onEdit={() => handleEditPet(pet)}
+                onDelete={handleDeletePet}
               />
             ))
           )}
-          <Pressable
+          {/* <Pressable
             style={[
               styles.addPetButton,
               isAddHover && styles.addPetButtonHover,
@@ -202,7 +307,7 @@ export default function CadastroPet() {
             <MaterialIcons name="add" size={26} color={"#74a57e"} />
             <Text style={styles.addPetText}>Adicionar Pet</Text>
             <Text style={styles.addPetSubtitle}>Cadastre um novo pet</Text>
-          </Pressable>
+          </Pressable> */}
         </ScrollView>
 
         <AddPetModal
@@ -211,6 +316,16 @@ export default function CadastroPet() {
           onSubmit={handleSubmitPet}
           isSpeciesDropdownOpen={isSpeciesDropdownOpen}
           setIsSpeciesDropdownOpen={setIsSpeciesDropdownOpen}
+        />
+
+        <EditPetModal
+          visible={isEditModalVisible}
+          onClose={() => {
+            setIsEditModalVisible(false);
+            setEditingPet(null);
+          }}
+          onSubmit={handleUpdatePet}
+          pet={editingPet}
         />
 
         <ViewPetModal

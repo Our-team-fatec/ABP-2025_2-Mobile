@@ -10,7 +10,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
 import { formStyles } from "../styles/form";
@@ -58,13 +60,15 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
       especie: "CACHORRO",
       raca: "",
       genero: "MACHO" as const,
-      dataNascimento: "",
+      idade: "",
       cor: "",
       porte: "MEDIO" as const,
-      castrado: false,
-      observacoes: "",
+      images: [],
     }
   });
+
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [localSizeDropdownOpen, setLocalSizeDropdownOpen] = useState(false);
 
   const formData = watch();
 
@@ -75,21 +79,66 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
 
   const handleSelectSize = (porte: "PEQUENO" | "MEDIO" | "GRANDE") => {
     setValue("porte", porte);
-    setIsSizeDropdownOpen(false);
+    setLocalSizeDropdownOpen(false);
   };
 
   const handleSelectGender = (genero: "MACHO" | "FEMEA") => {
     setValue("genero", genero);
   };
 
-  const handleToggleNeutered = () => {
-    setValue("castrado", !formData.castrado);
+  const handleTakePhoto = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      Alert.alert("Permissão negada", "Você precisa permitir o acesso à câmera");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setSelectedImages(prev => [...prev, result.assets[0].uri]);
+    }
+  };
+
+  const handlePickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      Alert.alert("Permissão negada", "Você precisa permitir o acesso à galeria");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      const newImages = result.assets.map((asset: any) => asset.uri);
+      setSelectedImages(prev => [...prev, ...newImages]);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
-      const ok = await onSubmit(data);
-      if (ok) onClose();
+      const dataWithImages = { ...data, images: selectedImages };
+      const ok = await onSubmit(dataWithImages);
+      if (ok) {
+        setSelectedImages([]);
+        onClose();
+      }
     } catch (error) {
       console.error(error);
       Alert.alert("Erro", "Não foi possível salvar o pet. Tente novamente.");
@@ -123,15 +172,37 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
               {/* Foto do Pet */}
               <View style={styles.sectionCard}>
                 <Text style={styles.sectionTitleModal}>Foto do Pet</Text>
-                <View style={styles.photoCircle}>
-                  <MaterialIcons
-                    name="photo-camera"
-                    size={32}
-                    color="#9ca3af"
-                  />
-                </View>
+                
+                {selectedImages.length > 0 ? (
+                  <ScrollView 
+                    horizontal 
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.imagesScrollView}
+                  >
+                    {selectedImages.map((uri, index) => (
+                      <View key={index} style={styles.imageContainer}>
+                        <Image source={{ uri }} style={styles.selectedImage} />
+                        <Pressable
+                          style={styles.removeImageButton}
+                          onPress={() => handleRemoveImage(index)}
+                        >
+                          <MaterialIcons name="close" size={16} color="#fff" />
+                        </Pressable>
+                      </View>
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <View style={styles.photoCircle}>
+                    <MaterialIcons
+                      name="photo-camera"
+                      size={32}
+                      color="#9ca3af"
+                    />
+                  </View>
+                )}
+                
                 <View style={styles.photoButtonsRow}>
-                  <TouchableOpacity style={styles.photoButton}>
+                  <TouchableOpacity style={styles.photoButton} onPress={handleTakePhoto}>
                     <MaterialIcons
                       name="photo-camera"
                       size={16}
@@ -139,7 +210,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
                     />
                     <Text style={styles.photoButtonLabel}>Tirar Foto</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.photoButton}>
+                  <TouchableOpacity style={styles.photoButton} onPress={handlePickImage}>
                     <MaterialIcons
                       name="photo-library"
                       size={16}
@@ -315,23 +386,22 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
                   <Text style={styles.modalLabel}>Idade *</Text>
                   <Controller
                     control={control}
-                    name="dataNascimento"
+                    name="idade"
                     render={({ field: { onChange, value } }) => (
                       <TextInput
                         style={[
                           styles.modalInput,
-                          errors.dataNascimento && formStyles.inputError,
+                          errors.idade && formStyles.inputError,
                         ]}
-                        placeholder="Digite a idade"
+                        placeholder="Ex: 2 anos, 6 meses"
                         value={value}
                         onChangeText={onChange}
-                        keyboardType="numeric"
                       />
                     )}
                   />
-                  {errors.dataNascimento && (
+                  {errors.idade && (
                     <Text style={formStyles.errorText}>
-                      {errors.dataNascimento.message}
+                      {errors.idade.message}
                     </Text>
                   )}
                 </View>
@@ -374,7 +444,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
                               errors.porte && formStyles.inputError,
                             ]}
                             onPress={() =>
-                              setIsSizeDropdownOpen(!isSizeDropdownOpen)
+                              setLocalSizeDropdownOpen(!localSizeDropdownOpen)
                             }
                           >
                             <Text
@@ -387,7 +457,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
                             </Text>
                             <MaterialIcons
                               name={
-                                isSizeDropdownOpen
+                                localSizeDropdownOpen
                                   ? "expand-less"
                                   : "expand-more"
                               }
@@ -395,7 +465,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
                               color="#047857"
                             />
                           </Pressable>
-                          {isSizeDropdownOpen && (
+                          {localSizeDropdownOpen && (
                             <View style={styles.selectDropdown}>
                               {sizeOptions.map((option) => (
                                 <Pressable
@@ -430,29 +500,6 @@ const AddPetModal: React.FC<AddPetModalProps> = ({
                     )}
                   </View>
                 </View>
-
-                <Controller
-                  control={control}
-                  name="castrado"
-                  render={({ field: { value } }) => (
-                    <Pressable
-                      style={styles.checkboxRow}
-                      onPress={handleToggleNeutered}
-                    >
-                      <View
-                        style={[
-                          styles.checkboxBox,
-                          value && styles.checkboxBoxChecked,
-                        ]}
-                      >
-                        {value && (
-                          <MaterialIcons name="check" size={14} color="#fff" />
-                        )}
-                      </View>
-                      <Text style={styles.checkboxLabel}>Castrado</Text>
-                    </Pressable>
-                  )}
-                />
               </View>
             </ScrollView>
 
