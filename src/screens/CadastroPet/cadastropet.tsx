@@ -326,6 +326,7 @@ export default function CadastroPet() {
           }}
           onSubmit={handleUpdatePet}
           pet={editingPet}
+          onImageDeleted={loadPets}
         />
 
         <ViewPetModal

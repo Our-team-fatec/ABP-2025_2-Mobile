@@ -20,12 +20,19 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { petSchema, type PetForm } from "../schemas/pet";
 import type { Pet } from "../services/pet";
+import { removePetImage } from "../services/pet";
 
 interface EditPetModalProps {
   visible: boolean;
   onClose: () => void;
   onSubmit: (petId: string, data: PetForm) => Promise<boolean>;
   pet: Pet | null;
+  onImageDeleted?: () => void;
+}
+
+interface ImageData {
+  uri: string;
+  id?: string; // ID da imagem se for uma imagem existente
 }
 
 const speciesOptions = [
@@ -40,6 +47,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
   onClose,
   onSubmit,
   pet,
+  onImageDeleted,
 }) => {
   const {
     control,
@@ -53,7 +61,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
     mode: "onBlur",
   });
 
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedImages, setSelectedImages] = useState<ImageData[]>([]);
   const [localSizeDropdownOpen, setLocalSizeDropdownOpen] = useState(false);
   const [isSpeciesDropdownOpen, setIsSpeciesDropdownOpen] = useState(false);
 
@@ -73,9 +81,9 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
         images: [],
       });
       
-      // Carrega imagens existentes
+      // Carrega imagens existentes com seus IDs
       if (pet.imagens && pet.imagens.length > 0) {
-        setSelectedImages(pet.imagens.map(img => img.url));
+        setSelectedImages(pet.imagens.map(img => ({ uri: img.url, id: img.id })));
       } else {
         setSelectedImages([]);
       }
@@ -112,7 +120,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
     });
 
     if (!result.canceled && result.assets[0]) {
-      setSelectedImages(prev => [...prev, result.assets[0].uri]);
+      setSelectedImages(prev => [...prev, { uri: result.assets[0].uri }]);
     }
   };
 
@@ -132,20 +140,57 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
     });
 
     if (!result.canceled) {
-      const newImages = result.assets.map((asset: any) => asset.uri);
+      const newImages = result.assets.map((asset: any) => ({ uri: asset.uri }));
       setSelectedImages(prev => [...prev, ...newImages]);
     }
   };
 
-  const handleRemoveImage = (index: number) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+  const handleRemoveImage = async (index: number) => {
+    const imageToRemove = selectedImages[index];
+    
+    // Se a imagem tem um ID, é uma imagem existente no servidor
+    if (imageToRemove.id && pet) {
+      Alert.alert(
+        "Confirmar exclusão",
+        "Deseja realmente excluir esta imagem?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel"
+          },
+          {
+            text: "Excluir",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await removePetImage(pet.id, imageToRemove.id!);
+                setSelectedImages(prev => prev.filter((_, i) => i !== index));
+                Alert.alert("Sucesso", "Imagem excluída com sucesso!");
+                // Recarrega a lista de pets para atualizar o objeto pet
+                if (onImageDeleted) {
+                  onImageDeleted();
+                }
+              } catch (error) {
+                console.error("Erro ao excluir imagem:", error);
+                Alert.alert("Erro", "Não foi possível excluir a imagem. Tente novamente.");
+              }
+            }
+          }
+        ]
+      );
+    } else {
+      // Imagem local, apenas remove do estado
+      setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const handleFormSubmit = handleSubmit(async (data) => {
     if (!pet) return;
     
     try {
-      const dataWithImages = { ...data, images: selectedImages };
+      // Extrai apenas as URIs das imagens para enviar
+      const imageUris = selectedImages.map(img => img.uri);
+      const dataWithImages = { ...data, images: imageUris };
       const ok = await onSubmit(pet.id, dataWithImages);
       if (ok) {
         setSelectedImages([]);
@@ -193,9 +238,9 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
                     showsHorizontalScrollIndicator={false}
                     style={styles.imagesScrollView}
                   >
-                    {selectedImages.map((uri, index) => (
+                    {selectedImages.map((image, index) => (
                       <View key={index} style={styles.imageContainer}>
-                        <Image source={{ uri }} style={styles.selectedImage} />
+                        <Image source={{ uri: image.uri }} style={styles.selectedImage} />
                         <Pressable
                           style={styles.removeImageButton}
                           onPress={() => handleRemoveImage(index)}
