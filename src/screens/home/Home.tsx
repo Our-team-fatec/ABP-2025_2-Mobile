@@ -1,8 +1,23 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
 export default function Home() {
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+
+  const handleNavigateToPets = () => {
+    navigation.navigate('CadastroPet', { initialView: 'myPets' });
+  };
+
+  const handleNavigateToAdoptionPets = () => {
+    navigation.navigate('CadastroPet', { initialView: 'adoption' });
+  };
+
   return (
     <View style={styles.container}>
       {/* Header fixo no topo */}
@@ -20,20 +35,47 @@ export default function Home() {
             Cuidando do seu pet com carinho e dedicação
           </Text>
           
-          {/* Área para conteúdo futuro */}
-          <View style={styles.contentSection}>
+          <Pressable 
+            style={({ pressed }) => [
+              styles.petButton,
+              pressed && styles.petButtonPressed
+            ]}
+            onPress={handleNavigateToPets}
+          >
+            <Text style={styles.petButtonTitle}>🐾 Meus Pets</Text>
+            <Text style={styles.petButtonSubtitle}>
+              Gerencie o RG Digital dos seus pets
+            </Text>
+          </Pressable>
+
+          <Pressable 
+            style={({ pressed }) => [
+              styles.adoptionButton,
+              pressed && styles.adoptionButtonPressed
+            ]}
+            onPress={handleNavigateToAdoptionPets}
+          >
+            <Text style={styles.adoptionButtonTitle}>❤️ Adoção</Text>
+            <Text style={styles.adoptionButtonSubtitle}>
+              Encontre seu novo companheiro
+            </Text>
+          </Pressable>
+          
+          {/* <View style={styles.contentSection}>
             <Text style={styles.sectionTitle}>Serviços</Text>
             <Text style={styles.sectionText}>
               Em breve você poderá agendar consultas, acompanhar a saúde do seu pet e muito mais!
             </Text>
-          </View>
+          </View> */}
           
-          <View style={styles.contentSection}>
+          {/* <View style={styles.contentSection}>
             <Text style={styles.sectionTitle}>Localização</Text>
             <Text style={styles.sectionText}>
               Encontre a clínica mais próxima de você
             </Text>
-          </View>
+          </View> */}
+
+
           
           {/* Espaço para não sobrepor o footer */}
           <View style={styles.footerSpacer} />
@@ -74,6 +116,68 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 24,
+  },
+  petButton: {
+    backgroundColor: '#83af8a',
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  petButtonPressed: {
+    backgroundColor: '#74a57e',
+    transform: [{ scale: 0.98 }],
+  },
+  petButtonTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  petButtonSubtitle: {
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'center',
+    opacity: 0.95,
+  },
+  adoptionButton: {
+    backgroundColor: '#e07b7b',
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  adoptionButtonPressed: {
+    backgroundColor: '#d66b6b',
+    transform: [{ scale: 0.98 }],
+  },
+  adoptionButtonTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  adoptionButtonSubtitle: {
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'center',
+    opacity: 0.95,
   },
   contentSection: {
     backgroundColor: 'white',

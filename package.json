@@ -5,6 +5,7 @@
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
+    "start:wsl": "REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.50 expo start --host lan",
     "test": "jest --verbose",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -19,6 +20,7 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "~54.0.7",
     "expo-asset": "^12.0.9",
+    "expo-image-picker": "^17.0.8",
     "expo-router": "~6.0.7",
     "expo-status-bar": "~3.0.8",
     "lucide-react": "^0.544.0",
@@ -38,6 +40,7 @@
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
+    "@react-native-community/cli": "^20.0.2",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^30.0.0",

@@ -13,8 +13,31 @@ export const API_CONFIG = {
       REGISTER: '/users/register',
       PROFILE: '/users/profile',
     },
-    AUTH:{
+    AUTH: {
       LOGIN: '/auth/login',
+      REFRESH_TOKEN: '/auth/refresh-token'
+    },
+    PETS: {
+      BASE: '/pets',
+      PUBLIC: '/pets/public',
+      IMAGES_STATUS: (id: string) => `/pets/${id}/images/status`,
+      IMAGES: (petId: string, imageId: string) => `/pets/${petId}/images/${imageId}`,
+      BY_ID: (id: string) => `/pets/${id}`,
+    },
+    HEALTH: {
+      BASE: '/saude',
+      PET: (petId: string) => `/saude/${petId}`
+    },
+    VACCINES: {
+      BASE: '/vacinas',
+      BY_ID: (id: string) => `/vacinas/${id}`,
+      PET: {
+        BASE: '/pets-vacinas',
+        LIST: (petId: string) => `/pets-vacinas/${petId}/vacinas`,
+        COMPLETE: (petId: string) => `/pets-vacinas/${petId}/complete`,
+        UPDATE: (id: string) => `/pets-vacinas/vacinas/${id}`,
+        DELETE: (id: string) => `/pets-vacinas/vacinas/${id}`
+      }
     }
   }
 } as const;

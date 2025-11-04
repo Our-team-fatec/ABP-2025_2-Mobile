@@ -9,7 +9,7 @@ export type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
   Home: undefined;
-  CadastroPet: undefined;
+  CadastroPet: { initialView?: 'myPets' | 'adoption' } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
