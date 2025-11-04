@@ -253,12 +253,12 @@ export async function updatePet(petId: string, data: UpdatePetRequest): Promise<
 
 /**
  * Atualiza um pet existente com FormData (suporta imagens)
- * PATCH /pets/:id
+ * PUT /pets/:id
  */
 export async function updatePetWithFormData(petId: string, formData: FormData): Promise<PetResponse> {
   try {
     const response = await http<PetResponse>(`${API_CONFIG.ENDPOINTS.PETS.BASE}/${petId}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "multipart/form-data",
       },
