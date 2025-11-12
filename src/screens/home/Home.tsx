@@ -11,11 +11,11 @@ export default function Home() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
   const handleNavigateToPets = () => {
-    navigation.navigate('CadastroPet', { initialView: 'myPets' });
+    navigation.navigate('CadastroPet');
   };
 
   const handleNavigateToAdoptionPets = () => {
-    navigation.navigate('CadastroPet', { initialView: 'adoption' });
+    navigation.navigate('AdocaoPet');
   };
 
   return (
