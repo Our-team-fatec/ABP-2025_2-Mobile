@@ -11,9 +11,10 @@ interface PetCardProps {
   onView: () => void;
   onDelete?: (petId: string) => void;
   onEdit?: () => void;
+  showActions?: boolean; // Controla se mostra os botões de editar/excluir
 }
 
-export default function PetCard({ pet, petId, onView, onDelete, onEdit }: PetCardProps) {
+export default function PetCard({ pet, petId, onView, onDelete, onEdit, showActions = true }: PetCardProps) {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   const getStatusStyle = (status: PetStatusType | undefined) => {
@@ -56,31 +57,33 @@ export default function PetCard({ pet, petId, onView, onDelete, onEdit }: PetCar
         <View style={styles.petHeader}>
           <Text style={styles.petName}>{pet.name}</Text>
 
-          <View style={styles.petActions}>
-            <Pressable
-              style={({ pressed, hovered }: any) => [
-                styles.iconButton,
-                styles.iconButtonFirst,
-                hovered && styles.iconButtonHover,
-                pressed && styles.iconButtonPressed,
-              ]}
-              hitSlop={8}
-              onPress={onEdit}
-            >
-              <MaterialIcons name="edit" size={16} color="#111827" />
-            </Pressable>
-            <Pressable
-              style={({ pressed, hovered }: any) => [
-                styles.iconButton,
-                hovered && styles.iconButtonHover,
-                pressed && styles.iconButtonPressed,
-              ]}
-              hitSlop={8}
-              onPress={handleDeletePress}
-            >
-              <MaterialIcons name="delete" size={16} color="#ef4444" />
-            </Pressable>
-          </View>
+          {showActions && (
+            <View style={styles.petActions}>
+              <Pressable
+                style={({ pressed, hovered }: any) => [
+                  styles.iconButton,
+                  styles.iconButtonFirst,
+                  hovered && styles.iconButtonHover,
+                  pressed && styles.iconButtonPressed,
+                ]}
+                hitSlop={8}
+                onPress={onEdit}
+              >
+                <MaterialIcons name="edit" size={16} color="#111827" />
+              </Pressable>
+              <Pressable
+                style={({ pressed, hovered }: any) => [
+                  styles.iconButton,
+                  hovered && styles.iconButtonHover,
+                  pressed && styles.iconButtonPressed,
+                ]}
+                hitSlop={8}
+                onPress={handleDeletePress}
+              >
+                <MaterialIcons name="delete" size={16} color="#ef4444" />
+              </Pressable>
+            </View>
+          )}
         </View>
 
         <Text style={styles.petInfo}>

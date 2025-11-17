@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Pressable, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../App';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ActionButton } from "../../components/ActionButton";
@@ -12,18 +10,12 @@ import ViewPetModal from "../../components/ViewPetModal";
 import type { PetData } from "../../types/pet";
 import PetCard from "../../components/PetCard";
 import { useNewPetForm } from "../../hooks/useNewPetForm";
-import { getPublicPets, createPet, type Pet, listPets, deletePet, createPetWithFormData, updatePet, updatePetWithFormData } from "../../services/pet";
+import { type Pet, listPets, deletePet, createPetWithFormData, updatePetWithFormData } from "../../services/pet";
 import { cadastroPetStyles as styles } from "../../styles/cadastroPet";
 import { type PetForm } from "../../schemas/pet";
 
-type CadastroPetRouteProp = RouteProp<RootStackParamList, 'CadastroPet'>;
-
 export default function CadastroPet() {
-  const route = useRoute<CadastroPetRouteProp>();
-  const initialView = route.params?.initialView || 'myPets';
-  
   const [search, setSearch] = useState("");
-  const [activeIndex, setActiveIndex] = useState(initialView === 'myPets' ? 0 : -1);
   const [isAddHover, setIsAddHover] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -55,13 +47,13 @@ export default function CadastroPet() {
 
   useEffect(() => {
     loadPets();
-  }, [activeIndex]);
+  }, []);
 
   const loadPets = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = activeIndex === 0 ? await listPets() : await getPublicPets();
+      const response = await listPets();
       setPets(response.data.pets);
     } catch (err) {
       console.error(err);
@@ -120,10 +112,6 @@ export default function CadastroPet() {
     setIsAddModalVisible(true);
     setIsAddHover(false);
     setIsSpeciesDropdownOpen(false);
-  };
-
-  const handleMyPetsButtonPress = () => {
-    setActiveIndex(activeIndex === 0 ? -1 : 0);
   };
 
   const handleAddButtonPress = () => {
@@ -195,12 +183,10 @@ export default function CadastroPet() {
       <View style={styles.container}>
         <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
           <Text style={styles.sectionTitle}>
-            {activeIndex === 0 ? "Meus Pets" : "Pets Disponíveis para Adoção"}
+            Meus Pets
           </Text>
           <Text style={styles.sectionSubtitle}>
-            {activeIndex === 0 
-              ? "Gerencie o RG Digital dos seus pets" 
-              : "Encontre seu novo companheiro"}
+            Gerencie o RG Digital dos seus pets
           </Text>
           <TextInput
             style={styles.input}
@@ -211,32 +197,9 @@ export default function CadastroPet() {
 
           <View style={styles.actionsRow}>
             <ActionButton
-              label={activeIndex === 0 ? "Adoção" : "Meus Pets"}
-              icon="favorite-border"
-              variant={activeIndex === 0 ? "adoption" : "mypet"}
-              customColor={activeIndex === 0 ? "#e07b7b" : "#83af8a"}
-              active={activeIndex !== 0}
-              onPress={handleMyPetsButtonPress}
-            />
-          {/*   <ActionButton
-              label="Registros"
-              icon="description"
-              active={activeIndex === 1}
-              onPress={() => setActiveIndex(1)}
-            />
-            <ActionButton
-              label="Pet Perdido"
-              icon="warning-amber"
-              color="danger"
-              variant="lost"
-              active={activeIndex === 2}
-              onPress={() => setActiveIndex(2)}
-            /> */}
-            <ActionButton
-              label={activeIndex === 0 ? "Adicionar" : "Doar"}
+              label="Adicionar Pet"
               icon="add"
               variant="add"
-              active={activeIndex === 3}
               onPress={handleAddButtonPress}
             />
           </View>
@@ -244,7 +207,7 @@ export default function CadastroPet() {
           {isLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#74a57e" />
-              <Text style={styles.loadingText}>Carregando pets disponíveis...</Text>
+              <Text style={styles.loadingText}>Carregando seus pets...</Text>
             </View>
           ) : error ? (
             <View style={styles.errorContainer}>
@@ -257,8 +220,8 @@ export default function CadastroPet() {
           ) : pets.length === 0 ? (
             <View style={styles.emptyContainer}>
               <MaterialIcons name="pets" size={48} color="#74a57e" />
-              <Text style={styles.emptyText}>Nenhum pet disponível para adoção</Text>
-              <Text style={styles.emptySubtext}>No momento não há pets cadastrados</Text>
+              <Text style={styles.emptyText}>Você ainda não tem pets cadastrados</Text>
+              <Text style={styles.emptySubtext}>Clique em "Adicionar Pet" para cadastrar seu primeiro pet</Text>
             </View>
           ) : (
             pets
@@ -295,19 +258,6 @@ export default function CadastroPet() {
               />
             ))
           )}
-          {/* <Pressable
-            style={[
-              styles.addPetButton,
-              isAddHover && styles.addPetButtonHover,
-            ]}
-            onPress={handleOpenAddModal}
-            onHoverIn={() => setIsAddHover(true)}
-            onHoverOut={() => setIsAddHover(false)}
-          >
-            <MaterialIcons name="add" size={26} color={"#74a57e"} />
-            <Text style={styles.addPetText}>Adicionar Pet</Text>
-            <Text style={styles.addPetSubtitle}>Cadastre um novo pet</Text>
-          </Pressable> */}
         </ScrollView>
 
         <AddPetModal
