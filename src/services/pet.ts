@@ -42,6 +42,7 @@ export interface Pet {
   porte: PetSize;
   genero: PetGender;
   cor: string;
+  idade?: number;
   criado_em: string;
   atualizado_em: string;
   removido_em: string | null;

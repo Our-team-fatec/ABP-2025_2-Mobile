@@ -20,7 +20,7 @@ export default function AdocaoPet() {
     species: pet.especie === 'CACHORRO' ? 'Cachorro' : 'Gato',
     breed: pet.raca,
     gender: pet.genero === 'MACHO' ? 'Macho' : 'Fêmea',
-    age: 'Não informada',
+    age: pet.idade ? `${pet.idade} anos` : 'Não informada',
     color: pet.cor,
     image: pet.imagens?.[0],
     images: pet.imagens,
