@@ -46,11 +46,14 @@ export default function Footer() {
                         <Entypo name="heart-outlined" size={24} color="black" />
                     </TouchableOpacity>
                     <View style={styles.iconWrapper}>
+                        <Entypo name="chat" size={24} color="black" style={styles.disabledIcon} />
+                    </View>
+                    {/* <View style={styles.iconWrapper}>
                         <FontAwesome name="stethoscope" size={24} color="black" style={styles.disabledIcon} />
                     </View>
                     <View style={styles.iconWrapper}>
                         <Feather name="map-pin" size={24} color="black" style={styles.disabledIcon} />
-                    </View>
+                    </View> */}
                 </View>
             </SafeAreaView>
         </View>

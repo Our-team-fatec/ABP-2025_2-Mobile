@@ -60,6 +60,13 @@ export default function Home() {
               Encontre seu novo companheiro
             </Text>
           </Pressable>
+
+          <View style={styles.chatBotButton}>
+            <Text style={styles.chatBotButtonTitle}>💬 Chat Bot</Text>
+            <Text style={styles.chatBotButtonSubtitle}>
+              Tire todas as dúvidas de cuidados com seu pet
+            </Text>
+          </View>
           
           {/* <View style={styles.contentSection}>
             <Text style={styles.sectionTitle}>Serviços</Text>
@@ -178,6 +185,34 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     opacity: 0.95,
+  },
+  chatBotButton: {
+    backgroundColor: '#d3d3d3',
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
+    opacity: 0.6,
+  },
+  chatBotButtonTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  chatBotButtonSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    opacity: 0.8,
   },
   contentSection: {
     backgroundColor: 'white',
