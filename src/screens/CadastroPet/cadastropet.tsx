@@ -10,12 +10,11 @@ import ViewPetModal from "../../components/ViewPetModal";
 import type { PetData } from "../../types/pet";
 import PetCard from "../../components/PetCard";
 import { useNewPetForm } from "../../hooks/useNewPetForm";
-import { type Pet, listPets, deletePet, createPetWithFormData, updatePetWithFormData } from "../../services/pet";
+import { type Pet, listPets, searchPets, deletePet, createPetWithFormData, updatePetWithFormData } from "../../services/pet";
 import { cadastroPetStyles as styles } from "../../styles/cadastroPet";
 import { type PetForm } from "../../schemas/pet";
 
 export default function CadastroPet() {
-  const [search, setSearch] = useState("");
   const [isAddHover, setIsAddHover] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -47,10 +46,23 @@ export default function CadastroPet() {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     loadPets(1);
   }, []);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm.trim()) {
+        handleSearch(searchTerm, 1);
+      } else {
+        loadPets(1);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
 
   const loadPets = async (page: number = 1, append: boolean = false) => {
     try {
@@ -80,9 +92,41 @@ export default function CadastroPet() {
     }
   };
 
+  const handleSearch = async (term: string, page: number = 1, append: boolean = false) => {
+    try {
+      if (page === 1) {
+        setIsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+      setError(null);
+      
+      const response = await searchPets(term, { page, limit: 10 });
+      
+      if (append) {
+        setPets(prev => [...prev, ...response.data.pets]);
+      } else {
+        setPets(response.data.pets);
+      }
+      
+      setHasMore(response.data.pagination.page < response.data.pagination.pages);
+      setCurrentPage(page);
+    } catch (err) {
+      console.error(err);
+      setError("Não foi possível buscar os pets");
+    } finally {
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
+
   const handleLoadMore = () => {
     if (!isLoadingMore && hasMore) {
-      loadPets(currentPage + 1, true);
+      if (searchTerm.trim()) {
+        handleSearch(searchTerm, currentPage + 1, true);
+      } else {
+        loadPets(currentPage + 1, true);
+      }
     }
   };
 
@@ -227,8 +271,8 @@ export default function CadastroPet() {
           <TextInput
             style={styles.input}
             placeholder="Buscar pet..."
-            value={search}
-            onChangeText={setSearch}
+            value={searchTerm}
+            onChangeText={setSearchTerm}
           />
 
           <View style={styles.actionsRow}>
@@ -260,11 +304,7 @@ export default function CadastroPet() {
               <Text style={styles.emptySubtext}>Clique em "Adicionar Pet" para cadastrar seu primeiro pet</Text>
             </View>
           ) : (
-            pets
-            .filter((pet) =>
-              pet.nome.toLowerCase().includes(search.toLowerCase().trim())
-            )
-            .map((pet) => (
+            pets.map((pet) => (
               <PetCard
                 key={pet.id}
                 petId={pet.id}

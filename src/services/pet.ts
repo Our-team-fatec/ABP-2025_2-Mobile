@@ -129,6 +129,48 @@ export async function listPets(options?: ListPetsOptions): Promise<PetsListRespo
 }
 
 /**
+ * Busca pets pelo nome
+ * GET /pets/search?nome=Rex&page=1&limit=10
+ */
+export async function searchPets(nome: string, options?: { page?: number; limit?: number }): Promise<PetsListResponse> {
+  try {
+    const queryParams = new URLSearchParams();
+    
+    queryParams.append("nome", nome);
+    if (options?.page) queryParams.append("page", options.page.toString());
+    if (options?.limit) queryParams.append("limit", options.limit.toString());
+    
+    const url = `${API_CONFIG.ENDPOINTS.PETS.BASE}/search?${queryParams.toString()}`;
+    const response = await http<PetsListResponse>(url);
+    return response;
+  } catch (error) {
+    console.error("[PetService] Erro ao buscar pets:", error);
+    throw new Error("Não foi possível buscar os pets");
+  }
+}
+
+/**
+ * Busca pets públicos pelo nome
+ * GET /pets/public/search?nome=Rex&page=1&limit=10
+ */
+export async function searchPublicPets(nome: string, options?: { page?: number; limit?: number }): Promise<PetsListResponse> {
+  try {
+    const queryParams = new URLSearchParams();
+    
+    queryParams.append("nome", nome);
+    if (options?.page) queryParams.append("page", options.page.toString());
+    if (options?.limit) queryParams.append("limit", options.limit.toString());
+    
+    const url = `${API_CONFIG.ENDPOINTS.PETS.BASE}/public/search?${queryParams.toString()}`;
+    const response = await http<PetsListResponse>(url);
+    return response;
+  } catch (error) {
+    console.error("[PetService] Erro ao buscar pets públicos:", error);
+    throw new Error("Não foi possível buscar os pets para adoção");
+  }
+}
+
+/**
  * Lista todos os pets disponíveis para adoção
  * GET /pets/public
  */
