@@ -36,22 +36,54 @@ export default function AdocaoPet() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
-    loadPets();
+    loadPets(1);
   }, []);
 
-  const loadPets = async () => {
+  const loadPets = async (page: number = 1, append: boolean = false) => {
     try {
-      setIsLoading(true);
+      if (page === 1) {
+        setIsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
       setError(null);
-      const response = await getPublicPets();
-      setPets(response.data.pets);
+      
+      const response = await getPublicPets({ page, limit: 10 });
+      
+      if (append) {
+        setPets(prev => [...prev, ...response.data.pets]);
+      } else {
+        setPets(response.data.pets);
+      }
+      
+      setHasMore(response.data.pagination.page < response.data.pagination.pages);
+      setCurrentPage(page);
     } catch (err) {
       console.error(err);
       setError("Não foi possível carregar a lista de pets");
     } finally {
       setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (!isLoadingMore && hasMore) {
+      loadPets(currentPage + 1, true);
+    }
+  };
+
+  const handleScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 20;
+    
+    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
+      handleLoadMore();
     }
   };
 
@@ -61,7 +93,11 @@ export default function AdocaoPet() {
     <View style={styles.screenContainer}>
       <Header />
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+        <ScrollView 
+          contentContainerStyle={{ paddingBottom: 120 }}
+          onScroll={handleScroll}
+          scrollEventThrottle={400}
+        >
           <Text style={styles.sectionTitle}>
             Pets Disponíveis para Adoção
           </Text>
@@ -86,7 +122,7 @@ export default function AdocaoPet() {
             <View style={styles.errorContainer}>
               <MaterialIcons name="error-outline" size={24} color="#ff6b6b" />
               <Text style={styles.errorText}>{error}</Text>
-              <Pressable style={styles.retryButton} onPress={loadPets}>
+              <Pressable style={styles.retryButton} onPress={() => loadPets(1)}>
                 <Text style={styles.retryButtonText}>Tentar Novamente</Text>
               </Pressable>
             </View>
@@ -130,6 +166,13 @@ export default function AdocaoPet() {
                 showActions={false}
               />
             ))
+          )}
+          
+          {isLoadingMore && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color="#74a57e" />
+              <Text style={styles.loadingText}>Carregando mais pets...</Text>
+            </View>
           )}
         </ScrollView>
 
