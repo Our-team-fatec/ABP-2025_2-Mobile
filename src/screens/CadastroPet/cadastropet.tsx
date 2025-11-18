@@ -1,0 +1,291 @@
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import { ActionButton } from "../../components/ActionButton";
+import AddPetModal from "../../components/AddPetModal";
+import EditPetModal from "../../components/EditPetModal";
+import ViewPetModal from "../../components/ViewPetModal";
+import type { PetData } from "../../types/pet";
+import PetCard from "../../components/PetCard";
+import { useNewPetForm } from "../../hooks/useNewPetForm";
+import { type Pet, listPets, deletePet, createPetWithFormData, updatePetWithFormData } from "../../services/pet";
+import { cadastroPetStyles as styles } from "../../styles/cadastroPet";
+import { type PetForm } from "../../schemas/pet";
+
+export default function CadastroPet() {
+  const [search, setSearch] = useState("");
+  const [isAddHover, setIsAddHover] = useState(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
+  const [editingPet, setEditingPet] = useState<Pet | null>(null);
+
+  const convertPetToPetData = (pet: Pet): PetData => ({
+    name: pet.nome,
+    species: pet.especie === 'CACHORRO' ? 'Cachorro' : 'Gato',
+    breed: pet.raca,
+    gender: pet.genero === 'MACHO' ? 'Macho' : 'Fêmea',
+    age: 'Não informada',
+    color: pet.cor,
+    image: pet.imagens?.[0],
+    images: pet.imagens,
+    status: pet.status?.map(s => ({
+      label: s.label,
+      type: (s.type === 'PENDENTE' ? 'pendente' : 
+            s.type === 'EM_DIA' ? 'aviso' : 
+            s.type === 'ALERTA' ? 'consulta' : 'vacinacao') 
+    })) || []
+  });
+
+  const [isSpeciesDropdownOpen, setIsSpeciesDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pets, setPets] = useState<Pet[]>([]);
+
+  useEffect(() => {
+    loadPets();
+  }, []);
+
+  const loadPets = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await listPets();
+      setPets(response.data.pets);
+    } catch (err) {
+      console.error(err);
+      setError("Não foi possível carregar a lista de pets");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const speciesOptions = [
+    "Cão",
+    "Gato",
+  ];
+
+  const handleSubmitPet = async (data: PetForm) => {
+    try {
+      const formData = new FormData();
+      
+      // Adiciona os campos de texto
+      formData.append('nome', data.nome);
+      formData.append('especie', data.especie);
+      formData.append('raca', data.raca || '');
+      formData.append('genero', data.genero);
+      formData.append('porte', data.porte);
+      formData.append('cor', data.cor || '');
+      formData.append('idade', data.idade);
+      
+      // Adiciona as imagens se houver
+      if (data.images && data.images.length > 0) {
+        for (const imageUri of data.images) {
+          const filename = imageUri.split('/').pop() || 'photo.jpg';
+          const match = /\.(\w+)$/.exec(filename);
+          const type = match ? `image/${match[1]}` : 'image/jpeg';
+          
+          formData.append('images', {
+            uri: imageUri,
+            name: filename,
+            type: type,
+          } as any);
+        }
+      }
+      
+      // Envia o FormData
+      await createPetWithFormData(formData);
+      
+      // Recarrega a lista de pets após criar um novo
+      loadPets();
+      return true;
+    } catch (error) {
+      console.error("Erro ao criar pet:", error);
+      return false;
+    }
+  };
+
+  const handleOpenAddModal = () => {
+    setIsAddModalVisible(true);
+    setIsAddHover(false);
+    setIsSpeciesDropdownOpen(false);
+  };
+
+  const handleAddButtonPress = () => {
+    handleOpenAddModal();
+  };
+
+  const handleDeletePet = async (petId: string) => {
+    try {
+      await deletePet(petId);
+      // Recarrega a lista de pets após excluir
+      loadPets();
+    } catch (error) {
+      console.error("Erro ao excluir pet:", error);
+      setError("Não foi possível excluir o pet");
+    }
+  };
+
+  const handleEditPet = (pet: Pet) => {
+    setEditingPet(pet);
+    setIsEditModalVisible(true);
+  };
+
+  const handleUpdatePet = async (petId: string, data: PetForm) => {
+    try {
+      const formData = new FormData();
+      
+      // Adiciona os campos de texto
+      formData.append('nome', data.nome);
+      formData.append('especie', data.especie);
+      formData.append('raca', data.raca || '');
+      formData.append('genero', data.genero);
+      formData.append('porte', data.porte);
+      formData.append('cor', data.cor || '');
+      formData.append('idade', data.idade);
+      
+      // Adiciona as imagens se houver
+      if (data.images && data.images.length > 0) {
+        for (const imageUri of data.images) {
+          // Verifica se é uma URL (imagem já existente) ou URI local (nova imagem)
+          if (!imageUri.startsWith('http')) {
+            const filename = imageUri.split('/').pop() || 'photo.jpg';
+            const match = /\.(\w+)$/.exec(filename);
+            const type = match ? `image/${match[1]}` : 'image/jpeg';
+            
+            formData.append('images', {
+              uri: imageUri,
+              name: filename,
+              type: type,
+            } as any);
+          }
+        }
+      }
+      
+      // Envia o FormData
+      await updatePetWithFormData(petId, formData);
+      
+      // Recarrega a lista de pets após atualizar
+      loadPets();
+      return true;
+    } catch (error) {
+      console.error("Erro ao atualizar pet:", error);
+      return false;
+    }
+  };
+
+  return (
+    <View style={styles.screenContainer}>
+      <Header />
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+          <Text style={styles.sectionTitle}>
+            Meus Pets
+          </Text>
+          <Text style={styles.sectionSubtitle}>
+            Gerencie o RG Digital dos seus pets
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Buscar pet..."
+            value={search}
+            onChangeText={setSearch}
+          />
+
+          <View style={styles.actionsRow}>
+            <ActionButton
+              label="Adicionar Pet"
+              icon="add"
+              variant="add"
+              onPress={handleAddButtonPress}
+            />
+          </View>
+
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#74a57e" />
+              <Text style={styles.loadingText}>Carregando seus pets...</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.errorContainer}>
+              <MaterialIcons name="error-outline" size={24} color="#ff6b6b" />
+              <Text style={styles.errorText}>{error}</Text>
+              <Pressable style={styles.retryButton} onPress={loadPets}>
+                <Text style={styles.retryButtonText}>Tentar Novamente</Text>
+              </Pressable>
+            </View>
+          ) : pets.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <MaterialIcons name="pets" size={48} color="#74a57e" />
+              <Text style={styles.emptyText}>Você ainda não tem pets cadastrados</Text>
+              <Text style={styles.emptySubtext}>Clique em "Adicionar Pet" para cadastrar seu primeiro pet</Text>
+            </View>
+          ) : (
+            pets
+            .filter((pet) =>
+              pet.nome.toLowerCase().includes(search.toLowerCase().trim())
+            )
+            .map((pet) => (
+              <PetCard
+                key={pet.id}
+                petId={pet.id}
+                pet={{
+                  name: pet.nome,
+                  breed: pet.raca,
+                  species: pet.especie === 'CACHORRO' ? 'Cachorro' : 'Gato',
+                  gender: pet.genero === 'MACHO' ? 'Macho' : 'Fêmea',
+                  age: `Cadastrado em ${new Date(pet.criado_em).toLocaleDateString('pt-BR')}`,
+                  image: pet.imagens?.[0],
+                  weight: pet.porte === 'PEQUENO' ? 'Pequeno porte' : 
+                         pet.porte === 'MEDIO' ? 'Médio porte' : 'Grande porte',
+                  color: pet.cor,
+                  status: pet.status?.map(s => ({
+                    label: s.label,
+                    type: (s.type === 'PENDENTE' ? 'pendente' : 
+                          s.type === 'EM_DIA' ? 'aviso' : 
+                          s.type === 'ALERTA' ? 'consulta' : 'vacinacao')
+                  })) ?? []
+                }}
+                onView={() => {
+                  setSelectedPet(convertPetToPetData(pet));
+                  setIsViewModalVisible(true);
+                }}
+                onEdit={() => handleEditPet(pet)}
+                onDelete={handleDeletePet}
+              />
+            ))
+          )}
+        </ScrollView>
+
+        <AddPetModal
+          visible={isAddModalVisible}
+          onClose={() => setIsAddModalVisible(false)}
+          onSubmit={handleSubmitPet}
+          isSpeciesDropdownOpen={isSpeciesDropdownOpen}
+          setIsSpeciesDropdownOpen={setIsSpeciesDropdownOpen}
+        />
+
+        <EditPetModal
+          visible={isEditModalVisible}
+          onClose={() => {
+            setIsEditModalVisible(false);
+            setEditingPet(null);
+          }}
+          onSubmit={handleUpdatePet}
+          pet={editingPet}
+          onImageDeleted={loadPets}
+        />
+
+        <ViewPetModal
+          visible={isViewModalVisible}
+          onClose={() => setIsViewModalVisible(false)}
+          pet={selectedPet}
+        />
+      </View>
+      <Footer />
+    </View>
+  );
+}
