@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Pressable, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, TextInput, StyleSheet, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -47,6 +47,7 @@ export default function CadastroPet() {
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     loadPets(1);
@@ -136,6 +137,19 @@ export default function CadastroPet() {
     
     if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
       handleLoadMore();
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      if (searchTerm.trim()) {
+        await handleSearch(searchTerm, 1);
+      } else {
+        await loadPets(1);
+      }
+    } finally {
+      setIsRefreshing(false);
     }
   };
   
@@ -261,6 +275,16 @@ export default function CadastroPet() {
           contentContainerStyle={{ paddingBottom: 120 }}
           onScroll={handleScroll}
           scrollEventThrottle={400}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              colors={["#74a57e"]}
+              tintColor="#74a57e"
+              title="Atualizando..."
+              titleColor="#6b7280"
+            />
+          }
         >
           <Text style={styles.sectionTitle}>
             Meus Pets

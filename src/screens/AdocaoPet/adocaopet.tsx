@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -33,6 +33,9 @@ export default function AdocaoPet() {
   
   // Estado para filtrar apenas minhas adoções
   const [showOnlyMyAdocoes, setShowOnlyMyAdocoes] = useState(false);
+  
+  // Estado para pull to refresh
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const convertPetToPetData = (pet: Pet): PetData => ({
     name: pet.nome,
@@ -117,6 +120,20 @@ export default function AdocaoPet() {
     
     if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
       handleLoadMore();
+    }
+  };
+  
+  // Função de refresh (pull to refresh)
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      if (showOnlyMyAdocoes) {
+        await loadMyAdocoes();
+      } else {
+        await loadPets(1);
+      }
+    } finally {
+      setIsRefreshing(false);
     }
   };
   
@@ -273,6 +290,16 @@ export default function AdocaoPet() {
           contentContainerStyle={{ paddingBottom: 120 }}
           onScroll={handleScroll}
           scrollEventThrottle={400}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              colors={["#74a57e"]}
+              tintColor="#74a57e"
+              title="Atualizando..."
+              titleColor="#6b7280"
+            />
+          }
         >
           <Text style={styles.sectionTitle}>
             Pets Disponíveis para Adoção
