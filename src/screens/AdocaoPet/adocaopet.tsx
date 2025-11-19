@@ -19,6 +19,7 @@ export default function AdocaoPet() {
   const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
   const [selectedAdocaoDescricao, setSelectedAdocaoDescricao] = useState("");
   const [selectedAdocaoEndereco, setSelectedAdocaoEndereco] = useState("");
+  const [selectedAdocaoContato, setSelectedAdocaoContato] = useState("");
   const [selectedAdocaoCriadoEm, setSelectedAdocaoCriadoEm] = useState("");
   
   // Estados para os modais de adoção
@@ -147,6 +148,7 @@ export default function AdocaoPet() {
             id: adocao.id,
             descricao: adocao.descricao,
             endereco: adocao.endereco,
+            contato: adocao.contato,
             criado_em: adocao.criado_em,
           }
         }));
@@ -347,6 +349,7 @@ export default function AdocaoPet() {
                   setSelectedPet(convertPetToPetData(pet));
                   setSelectedAdocaoDescricao(pet.adocao?.descricao || "");
                   setSelectedAdocaoEndereco(pet.adocao?.endereco || "");
+                  setSelectedAdocaoContato(pet.adocao?.contato || "");
                   setSelectedAdocaoCriadoEm(pet.adocao?.criado_em || "");
                   setIsViewModalVisible(true);
                 }}
@@ -378,6 +381,7 @@ export default function AdocaoPet() {
           pet={selectedPet}
           descricao={selectedAdocaoDescricao}
           endereco={selectedAdocaoEndereco}
+          contato={selectedAdocaoContato}
           criado_em={selectedAdocaoCriadoEm}
         />
         

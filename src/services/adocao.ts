@@ -9,6 +9,7 @@ export interface Adocao {
   tutor_id: string;
   descricao: string;
   endereco: string;
+  contato: string;
   criado_em: string;
   atualizado_em: string;
   removido_em: string | null;
@@ -19,11 +20,13 @@ export interface CreateAdocaoRequest {
   pet_id: string;
   descricao: string;
   endereco: string;
+  contato: string;
 }
 
 export interface UpdateAdocaoRequest {
   descricao?: string;
   endereco?: string;
+  contato?: string;
 }
 
 export interface AdocaoResponse {
@@ -52,16 +55,28 @@ export interface AdocoesListResponse {
  */
 export async function createAdocao(data: CreateAdocaoRequest): Promise<AdocaoResponse> {
   try {
-    const response = await http<AdocaoResponse>(`${API_CONFIG.BASE_URL}/adocoes`, {
+    const response = await http<any>(`${API_CONFIG.BASE_URL}/adocoes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data)
     });
+    
+    // Se a API retornar erro no response
+    if (response.status === "error") {
+      throw new Error(response.message || "Não foi possível criar o anúncio de adoção");
+    }
+    
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error("[AdocaoService] Erro ao criar adoção:", error);
+    
+    // Se o erro tiver uma mensagem específica, usa ela
+    if (error.message) {
+      throw error;
+    }
+    
     throw new Error("Não foi possível criar o anúncio de adoção");
   }
 }
@@ -87,6 +102,7 @@ export async function getAdocaoById(adocaoId: string): Promise<AdocaoResponse> {
         tutor_id: adocaoData.tutor_id,
         descricao: adocaoData.descricao,
         endereco: adocaoData.endereco,
+        contato: adocaoData.contato || "",
         criado_em: adocaoData.criado_em,
         atualizado_em: adocaoData.atualizado_em,
         removido_em: adocaoData.removido_em,
@@ -141,16 +157,28 @@ export async function getMyAdocoes(): Promise<AdocoesListResponse> {
  */
 export async function updateAdocao(adocaoId: string, data: UpdateAdocaoRequest): Promise<AdocaoResponse> {
   try {
-    const response = await http<AdocaoResponse>(`${API_CONFIG.BASE_URL}/adocoes/${adocaoId}`, {
+    const response = await http<any>(`${API_CONFIG.BASE_URL}/adocoes/${adocaoId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data)
     });
+    
+    // Se a API retornar erro no response
+    if (response.status === "error") {
+      throw new Error(response.message || "Não foi possível atualizar a adoção");
+    }
+    
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error("[AdocaoService] Erro ao atualizar adoção:", error);
+    
+    // Se o erro tiver uma mensagem específica, usa ela
+    if (error.message) {
+      throw error;
+    }
+    
     throw new Error("Não foi possível atualizar a adoção");
   }
 }

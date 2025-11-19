@@ -20,6 +20,7 @@ interface ViewAdocaoModalProps {
   pet: PetData | null;
   descricao: string;
   endereco: string;
+  contato?: string;
   criado_em?: string;
 }
 
@@ -29,8 +30,16 @@ export default function ViewAdocaoModal({
   pet,
   descricao,
   endereco,
+  contato,
   criado_em,
 }: ViewAdocaoModalProps) {
+  const formatPhone = (phone: string) => {
+    const numbers = phone.replace(/\D/g, '');
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    if (numbers.length <= 10) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -187,6 +196,16 @@ export default function ViewAdocaoModal({
                     <Text style={styles.modalInput}>{endereco}</Text>
                   </View>
                 </View>
+
+                {contato && (
+                  <View style={styles.sectionCard}>
+                    <Text style={styles.sectionTitleModal}>Contato</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <MaterialIcons name="phone" size={20} color="#74a57e" />
+                      <Text style={styles.modalInput}>{formatPhone(contato)}</Text>
+                    </View>
+                  </View>
+                )}
 
                 {criado_em && (
                   <View style={styles.sectionCard}>

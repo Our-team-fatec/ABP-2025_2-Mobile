@@ -30,6 +30,7 @@ export interface PetAdocao {
   id: string;
   descricao: string;
   endereco: string;
+  contato: string;
   criado_em: string;
 }
 

@@ -27,6 +27,7 @@ export function AddAdocaoModal({ visible, onClose, onSubmit, pets }: AddAdocaoMo
   const [petId, setPetId] = useState("");
   const [descricao, setDescricao] = useState("");
   const [endereco, setEndereco] = useState("");
+  const [contato, setContato] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isPetDropdownOpen, setIsPetDropdownOpen] = useState(false);
   const [petSearch, setPetSearch] = useState("");
@@ -35,6 +36,25 @@ export function AddAdocaoModal({ visible, onClose, onSubmit, pets }: AddAdocaoMo
   const filteredPets = pets.filter(pet => 
     pet.nome.toLowerCase().includes(petSearch.toLowerCase().trim())
   );
+
+  const formatPhone = (text: string) => {
+    // Remove tudo que não é número
+    const numbers = text.replace(/\D/g, '');
+    
+    // Limita a 11 dígitos
+    const limited = numbers.slice(0, 11);
+    
+    // Formata: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+    if (limited.length <= 2) {
+      return limited;
+    } else if (limited.length <= 6) {
+      return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
+    } else if (limited.length <= 10) {
+      return `(${limited.slice(0, 2)}) ${limited.slice(2, 6)}-${limited.slice(6)}`;
+    } else {
+      return `(${limited.slice(0, 2)}) ${limited.slice(2, 7)}-${limited.slice(7)}`;
+    }
+  };
 
   const handleSubmit = async () => {
     // Validação
@@ -50,23 +70,34 @@ export function AddAdocaoModal({ visible, onClose, onSubmit, pets }: AddAdocaoMo
       Alert.alert("Erro", "Digite um endereço");
       return;
     }
+    if (!contato.trim()) {
+      Alert.alert("Erro", "Digite um telefone de contato");
+      return;
+    }
 
     setIsLoading(true);
     try {
+      // Remove formatação do telefone, mantém apenas números
+      const contatoNumeros = contato.replace(/\D/g, '');
+      
       await onSubmit({
         pet_id: petId,
         descricao: descricao.trim(),
         endereco: endereco.trim(),
+        contato: contatoNumeros,
       });
       
       // Limpar formulário
       setPetId("");
       setDescricao("");
       setEndereco("");
+      setContato("");
       setPetSearch("");
       onClose();
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível criar o anúncio de adoção");
+    } catch (error: any) {
+      console.error("Erro ao criar adoção:", error);
+      const errorMessage = error.message || "Não foi possível criar o anúncio de adoção";
+      Alert.alert("Erro", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +107,7 @@ export function AddAdocaoModal({ visible, onClose, onSubmit, pets }: AddAdocaoMo
     setPetId("");
     setDescricao("");
     setEndereco("");
+    setContato("");
     setIsPetDropdownOpen(false);
     setPetSearch("");
     onClose();
@@ -207,6 +239,20 @@ export function AddAdocaoModal({ visible, onClose, onSubmit, pets }: AddAdocaoMo
                     onChangeText={setEndereco}
                     placeholder="Ex: São Paulo, SP"
                     placeholderTextColor="#9ca3af"
+                  />
+                </View>
+
+                {/* Contato */}
+                <View style={styles.sectionCard}>
+                  <Text style={styles.sectionTitleModal}>Telefone de Contato *</Text>
+                  <TextInput
+                    style={styles.modalInput}
+                    value={contato}
+                    onChangeText={(text) => setContato(formatPhone(text))}
+                    placeholder="(00) 00000-0000"
+                    placeholderTextColor="#9ca3af"
+                    keyboardType="phone-pad"
+                    maxLength={15}
                   />
                 </View>
               </ScrollView>
