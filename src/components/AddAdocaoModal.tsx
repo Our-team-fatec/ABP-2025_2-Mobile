@@ -143,59 +143,68 @@ export function AddAdocaoModal({ visible, onClose, onSubmit, pets }: AddAdocaoMo
                   <View style={{ position: 'relative', zIndex: 1000 }}>
                     <Pressable
                       onPress={() => setIsPetDropdownOpen(!isPetDropdownOpen)}
-                      style={styles.dropdownButton}
+                      style={({ pressed }) => [
+                        styles.dropdownButton,
+                        isPetDropdownOpen && { borderColor: "#74a57e", borderWidth: 2 },
+                        pressed && { backgroundColor: "#f9fafb" }
+                      ]}
                     >
-                      <Text style={styles.dropdownButtonText}>
-                        {selectedPet ? `${selectedPet.nome} - ${selectedPet.especie}` : "Selecione um pet..."}
+                      <Text style={[
+                        styles.dropdownButtonText,
+                        selectedPet && { color: "#111827", fontWeight: "500" },
+                        !selectedPet && { color: "#9ca3af" }
+                      ]}>
+                        {selectedPet ? `🐾 ${selectedPet.nome} - ${selectedPet.especie}` : "Selecione um pet..."}
                       </Text>
                       <MaterialIcons
                         name={isPetDropdownOpen ? "expand-less" : "expand-more"}
                         size={24}
-                        color="#6b7280"
+                        color={isPetDropdownOpen ? "#74a57e" : "#6b7280"}
                       />
                     </Pressable>
 
                     {isPetDropdownOpen && (
-                      <View style={{
-                        position: 'absolute',
-                        top: '100%',
-                        left: 0,
-                        right: 0,
-                        backgroundColor: '#fff',
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        borderColor: '#d1d5db',
-                        marginTop: 4,
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 8,
-                        elevation: 5,
-                        maxHeight: 300,
-                        zIndex: 1001,
-                      }}>
-                        <View style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: "#e5e7eb" }}>
+                      <View style={[
+                        styles.dropdownMenu,
+                        {
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          right: 0,
+                          marginTop: 8,
+                          zIndex: 1001,
+                        }
+                      ]}>
+                        <View style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 10,
+                          borderBottomWidth: 1,
+                          borderBottomColor: "#e5e7eb",
+                          backgroundColor: "#f9fafb"
+                        }}>
                           <TextInput
-                            style={[styles.modalInput, { marginBottom: 0 }]}
+                            style={[styles.modalInput, { marginBottom: 0, fontSize: 15 }]}
                             value={petSearch}
                             onChangeText={setPetSearch}
-                            placeholder="Buscar pet por nome..."
+                            placeholder="🔍 Buscar pet por nome..."
                             placeholderTextColor="#9ca3af"
                             autoFocus
                           />
                         </View>
-                        <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled>
+                        <ScrollView style={{ maxHeight: 240 }} nestedScrollEnabled>
                           {filteredPets.length === 0 ? (
                             <Text style={styles.dropdownEmptyText}>
                               {petSearch ? "Nenhum pet encontrado" : "Nenhum pet disponível"}
                             </Text>
                           ) : (
-                            filteredPets.map((pet) => (
+                            filteredPets.map((pet, index) => (
                               <Pressable
                                 key={pet.id}
-                                style={[
+                                style={({ pressed }) => [
                                   styles.dropdownOption,
                                   petId === pet.id && styles.dropdownOptionSelected,
+                                  pressed && { backgroundColor: "#f3f4f6" },
+                                  index === filteredPets.length - 1 && { borderBottomWidth: 0 }
                                 ]}
                                 onPress={() => {
                                   setPetId(pet.id);
@@ -203,9 +212,25 @@ export function AddAdocaoModal({ visible, onClose, onSubmit, pets }: AddAdocaoMo
                                   setPetSearch("");
                                 }}
                               >
-                                <Text style={styles.dropdownOptionText}>
-                                  {pet.nome} - {pet.especie}
-                                </Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                                  <Text style={{ fontSize: 18 }}>
+                                    {pet.especie === "CACHORRO" ? "🐕" : "🐈"}
+                                  </Text>
+                                  <View style={{ flex: 1 }}>
+                                    <Text style={[
+                                      styles.dropdownOptionText,
+                                      petId === pet.id && { fontWeight: "600", color: "#047857" }
+                                    ]}>
+                                      {pet.nome}
+                                    </Text>
+                                    <Text style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>
+                                      {pet.raca} • {pet.genero === "MACHO" ? "Macho" : "Fêmea"}
+                                    </Text>
+                                  </View>
+                                  {petId === pet.id && (
+                                    <MaterialIcons name="check-circle" size={20} color="#047857" />
+                                  )}
+                                </View>
                               </Pressable>
                             ))
                           )}
