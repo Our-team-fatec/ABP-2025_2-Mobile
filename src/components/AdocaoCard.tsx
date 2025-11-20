@@ -84,7 +84,7 @@ export default function AdocaoCard({
 
         <Text style={styles.petInfo}>
           {pet.breed} • {pet.gender} • {pet.age}
-          {pet.weight ? ` • ${pet.weight}` : ""}
+          {pet.size ? ` • ${pet.size}` : ""}
           {pet.color ? ` • ${pet.color}` : ""}
         </Text>
 

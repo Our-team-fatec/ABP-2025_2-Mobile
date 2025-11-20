@@ -21,7 +21,7 @@ export const Environment = {
   IS_PROD: NODE_ENV === 'production',
   
   // API - Com fallback para a URL de produção
-  API_BASE_URL: API_BASE_URL || 'https://davincipets-api.fly.dev/api',
+  API_BASE_URL: API_BASE_URL || 'http://localhost:3000/api',
   
   // Debug
   DEBUG_MODE: DEBUG_MODE === 'true',

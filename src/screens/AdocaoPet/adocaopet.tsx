@@ -364,7 +364,7 @@ export default function AdocaoPet() {
                   gender: pet.genero === 'MACHO' ? 'Macho' : 'Fêmea',
                   age: pet.idade ? `${pet.idade} anos` : 'Não informada',
                   image: pet.imagens?.[0],
-                  weight: pet.porte === 'PEQUENO' ? 'Pequeno porte' : 
+                  size: pet.porte === 'PEQUENO' ? 'Pequeno porte' : 
                          pet.porte === 'MEDIO' ? 'Médio porte' : 'Grande porte',
                   color: pet.cor,
                   status: [],
