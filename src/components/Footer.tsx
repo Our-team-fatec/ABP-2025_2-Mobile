@@ -23,6 +23,10 @@ export default function Footer() {
         navigation.navigate("AdocaoPet" as never);
     };
 
+    const handleNavigateToChatbot = () => {
+        navigation.navigate("Chatbot" as never);
+    };
+
     return (
         <View style={styles.footerWrapper}>
             <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
@@ -45,9 +49,9 @@ export default function Footer() {
                     >
                         <Entypo name="heart-outlined" size={24} color="black" />
                     </TouchableOpacity>
-                    <View style={styles.iconWrapper}>
-                        <Entypo name="chat" size={24} color="black" style={styles.disabledIcon} />
-                    </View>
+                    <TouchableOpacity style={styles.iconWrapper} onPress={handleNavigateToChatbot}>
+                        <Entypo name="chat" size={24} color="black"/>
+                    </TouchableOpacity>
                     {/* <View style={styles.iconWrapper}>
                         <FontAwesome name="stethoscope" size={24} color="black" style={styles.disabledIcon} />
                     </View>
