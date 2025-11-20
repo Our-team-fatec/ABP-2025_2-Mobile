@@ -11,7 +11,7 @@ describe('PetCard', () => {
     gender: 'Macho',
     age: 'Cadastrado em 02/11/2025',
     color: 'Caramelo',
-    weight: 'Médio porte',
+    size: 'Médio porte',
     image: {
       id: 'img-1',
       url: 'https://example.com/dog.jpg',

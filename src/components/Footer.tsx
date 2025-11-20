@@ -19,6 +19,14 @@ export default function Footer() {
         navigation.navigate("CadastroPet" as never);
     };
 
+    const handleNavigateToAdocaoPet = () => {
+        navigation.navigate("AdocaoPet" as never);
+    };
+
+    const handleNavigateToChatbot = () => {
+        navigation.navigate("Chatbot" as never);
+    };
+
     return (
         <View style={styles.footerWrapper}>
             <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
@@ -35,15 +43,21 @@ export default function Footer() {
                     >
                         <MaterialCommunityIcons name="dog" size={24} color="black" />
                     </TouchableOpacity>
-                    <View style={styles.iconWrapper}>
-                        <Entypo name="heart-outlined" size={24} color="black" style={styles.disabledIcon} />
-                    </View>
-                    <View style={styles.iconWrapper}>
+                    <TouchableOpacity 
+                        style={styles.iconWrapper}
+                        onPress={handleNavigateToAdocaoPet}
+                    >
+                        <Entypo name="heart-outlined" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.iconWrapper} onPress={handleNavigateToChatbot}>
+                        <Entypo name="chat" size={24} color="black"/>
+                    </TouchableOpacity>
+                    {/* <View style={styles.iconWrapper}>
                         <FontAwesome name="stethoscope" size={24} color="black" style={styles.disabledIcon} />
                     </View>
                     <View style={styles.iconWrapper}>
                         <Feather name="map-pin" size={24} color="black" style={styles.disabledIcon} />
-                    </View>
+                    </View> */}
                 </View>
             </SafeAreaView>
         </View>

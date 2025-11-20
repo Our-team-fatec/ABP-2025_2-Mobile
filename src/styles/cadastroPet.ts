@@ -500,6 +500,10 @@ export const cadastroPetStyles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
   },
   modalButtonLabel: {
     fontSize: 14,
@@ -514,6 +518,9 @@ export const cadastroPetStyles = StyleSheet.create({
   },
   modalCancelButtonLabel: {
     color: "#374151",
+  },
+  modalSubmitButton: {
+    backgroundColor: "#10b981",
   },
   modalPrimaryButton: {
     backgroundColor: "#10b981",
@@ -717,5 +724,120 @@ export const cadastroPetStyles = StyleSheet.create({
   carouselDotActive: {
     backgroundColor: "#fff",
     width: 24,
+  },
+  // Estilos para botões de adoção
+  cardActions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginLeft: 8,
+    marginRight: 8,
+  },
+  adocaoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ec4899",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    gap: 4,
+  },
+  adocaoButtonText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  deleteAdocaoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ef4444",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    gap: 4,
+  },
+  deleteAdocaoButtonText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  filterButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#74a57e",
+    gap: 8,
+  },
+  filterButtonActive: {
+    backgroundColor: "#74a57e",
+  },
+  filterButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#74a57e",
+  },
+  filterButtonTextActive: {
+    color: "#fff",
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fff",
+  },
+  // Dropdown styles para seleção de pets
+  dropdownButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    minHeight: 48,
+  },
+  dropdownButtonText: {
+    fontSize: 15,
+    color: "#374151",
+    flex: 1,
+  },
+  dropdownMenu: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+    maxHeight: 320,
+    overflow: "hidden",
+  },
+  dropdownOption: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  dropdownOptionSelected: {
+    backgroundColor: "#ecfdf5",
+  },
+  dropdownOptionText: {
+    fontSize: 15,
+    color: "#374151",
+  },
+  dropdownEmptyText: {
+    fontSize: 14,
+    color: "#9ca3af",
+    textAlign: "center",
+    paddingVertical: 20,
   },
 });

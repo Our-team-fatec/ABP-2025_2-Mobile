@@ -18,6 +18,10 @@ export default function Home() {
     navigation.navigate('AdocaoPet');
   };
 
+  const handleNavigateToChatbot = () => {
+    navigation.navigate('Chatbot');
+  };
+
   return (
     <View style={styles.container}>
       {/* Header fixo no topo */}
@@ -58,6 +62,19 @@ export default function Home() {
             <Text style={styles.adoptionButtonTitle}>❤️ Adoção</Text>
             <Text style={styles.adoptionButtonSubtitle}>
               Encontre seu novo companheiro
+            </Text>
+          </Pressable>
+
+          <Pressable 
+            style={({ pressed }) => [
+              styles.chatBotButton,
+              pressed && styles.chatBotButtonPressed
+            ]}
+            onPress={handleNavigateToChatbot}
+          >
+            <Text style={styles.chatBotButtonTitle}>💬 Chat Bot</Text>
+            <Text style={styles.chatBotButtonSubtitle}>
+              Tire todas as dúvidas de cuidados com seu pet
             </Text>
           </Pressable>
           
@@ -174,6 +191,37 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   adoptionButtonSubtitle: {
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'center',
+    opacity: 0.95,
+  },
+  chatBotButton: {
+    backgroundColor: '#667eea',
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  chatBotButtonPressed: {
+    backgroundColor: '#5568d3',
+    transform: [{ scale: 0.98 }],
+  },
+  chatBotButtonTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  chatBotButtonSubtitle: {
     fontSize: 14,
     color: 'white',
     textAlign: 'center',

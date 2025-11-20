@@ -75,7 +75,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({
         especie: pet.especie,
         raca: pet.raca,
         genero: pet.genero,
-        idade: "",  // Idade não está disponível no tipo Pet, será preenchida manualmente
+        idade: pet.idade ? String(pet.idade) : "",
         cor: pet.cor,
         porte: pet.porte,
         images: [],

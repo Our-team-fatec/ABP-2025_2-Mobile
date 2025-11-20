@@ -1,43 +1,53 @@
 import React, { useState, useEffect } from "react";
 import {
-  Modal,
   View,
+  Text,
+  Modal,
+  Image,
   ScrollView,
   Pressable,
-  Text,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Image,
-  Dimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
-import PetCarteirinha from "./PetCarteirinha";
+import type { PetData } from "../types/pet";
 
-import type { PetData } from '../types/pet';
-
-const { width } = Dimensions.get('window');
-const IMAGE_WIDTH = width * 0.8;
-
-interface ViewPetModalProps {
+interface ViewAdocaoModalProps {
   visible: boolean;
   onClose: () => void;
   pet: PetData | null;
+  descricao: string;
+  endereco: string;
+  contato?: string;
+  criado_em?: string;
 }
 
-const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) => {
+export default function ViewAdocaoModal({
+  visible,
+  onClose,
+  pet,
+  descricao,
+  endereco,
+  contato,
+  criado_em,
+}: ViewAdocaoModalProps) {
+  const formatPhone = (phone: string) => {
+    const numbers = phone.replace(/\D/g, '');
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    if (numbers.length <= 10) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showCarteirinha, setShowCarteirinha] = useState(false);
-  
-  // Reset do índice quando o modal abre ou o pet muda
+
   useEffect(() => {
     if (visible) {
       setCurrentImageIndex(0);
-      setShowCarteirinha(false);
     }
   }, [visible, pet]);
-  
+
   if (!pet) return null;
 
   const petImages = pet.images || (pet.image ? [pet.image] : []);
@@ -78,7 +88,6 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator
               >
-
                 <View style={styles.sectionCard}>
                   <Text style={styles.sectionTitleModal}>Foto do Pet</Text>
                   {hasImages ? (
@@ -91,7 +100,6 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                       
                       {petImages.length > 1 && (
                         <>
-                          {/* Botão Anterior */}
                           {currentImageIndex > 0 && (
                             <Pressable
                               style={[styles.carouselButton, styles.carouselButtonLeft]}
@@ -101,7 +109,6 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                             </Pressable>
                           )}
                           
-                          {/* Botão Próximo */}
                           {currentImageIndex < petImages.length - 1 && (
                             <Pressable
                               style={[styles.carouselButton, styles.carouselButtonRight]}
@@ -111,7 +118,6 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                             </Pressable>
                           )}
                           
-                          {/* Indicadores */}
                           <View style={styles.carouselIndicators}>
                             {petImages.map((_, index) => (
                               <View
@@ -133,12 +139,11 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                   )}
                 </View>
 
-                {/* Informações Básicas */}
                 <View style={styles.sectionCard}>
-                  <Text style={styles.sectionTitleModal}>Informações Básicas</Text>
-
+                  <Text style={styles.sectionTitleModal}>Informações do Pet</Text>
+                  
                   <View style={styles.modalField}>
-                    <Text style={styles.modalLabel}>Nome do Pet</Text>
+                    <Text style={styles.modalLabel}>Nome</Text>
                     <Text style={styles.modalInput}>{pet.name}</Text>
                   </View>
 
@@ -153,8 +158,8 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                   </View>
 
                   <View style={styles.modalField}>
-                    <Text style={styles.modalLabel}>Sexo</Text>
-                    <Text style={styles.modalInput}>{pet.gender === "male" ? "Macho" : pet.gender === "female" ? "Fêmea" : pet.gender}</Text>
+                    <Text style={styles.modalLabel}>Gênero</Text>
+                    <Text style={styles.modalInput}>{pet.gender}</Text>
                   </View>
 
                   <View style={styles.modalField}>
@@ -162,59 +167,61 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                     <Text style={styles.modalInput}>{pet.age}</Text>
                   </View>
 
-                  {pet.size && (
-                    <View style={styles.modalField}>
-                      <Text style={styles.modalLabel}>Porte</Text>
-                      <Text style={styles.modalInput}>{pet.size}</Text>
-                    </View>
-                  )}
-
-                  {pet.tutor && (
-                    <View style={styles.modalField}>
-                      <Text style={styles.modalLabel}>Tutor</Text>
-                      <Text style={styles.modalInput}>{pet.tutor}</Text>
-                    </View>
-                  )}
-
                   {pet.color && (
                     <View style={styles.modalField}>
                       <Text style={styles.modalLabel}>Cor</Text>
                       <Text style={styles.modalInput}>{pet.color}</Text>
                     </View>
                   )}
-                </View>
 
-                {/* Status do pet */}
-                <View style={styles.sectionCard}>
-                  <Text style={styles.sectionTitleModal}>Status</Text>
-                  {pet.status && pet.status.length > 0 ? (
-                    pet.status.map((s, i) => {
-                      const texto = typeof s === "string" ? s : s?.label ?? "Status indefinido";
-                      return (
-                        <Text key={i} style={[styles.petStatus, styles.petNeutral]}>
-                          {texto}
-                        </Text>
-                      );
-                    })
-                  ) : (
-                    <Text style={[styles.petStatus, styles.petNeutral]}>
-                      Nenhum status registrado
-                    </Text>
+                  {pet.size && (
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Porte</Text>
+                      <Text style={styles.modalInput}>{pet.size}</Text>
+                    </View>
                   )}
                 </View>
+
+                <View style={styles.sectionCard}>
+                  <Text style={styles.sectionTitleModal}>Sobre o Anúncio</Text>
+                  <View style={styles.modalField}>
+                    <Text style={styles.modalInput}>{descricao}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.sectionCard}>
+                  <Text style={styles.sectionTitleModal}>Localização</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <MaterialIcons name="location-on" size={20} color="#74a57e" />
+                    <Text style={styles.modalInput}>{endereco}</Text>
+                  </View>
+                </View>
+
+                {contato && (
+                  <View style={styles.sectionCard}>
+                    <Text style={styles.sectionTitleModal}>Contato</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <MaterialIcons name="phone" size={20} color="#74a57e" />
+                      <Text style={styles.modalInput}>{formatPhone(contato)}</Text>
+                    </View>
+                  </View>
+                )}
+
+                {criado_em && (
+                  <View style={styles.sectionCard}>
+                    <Text style={styles.sectionTitleModal}>Anunciado em</Text>
+                    <Text style={styles.modalInput}>
+                      {new Date(criado_em).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                      })}
+                    </Text>
+                  </View>
+                )}
               </ScrollView>
 
               <View style={styles.modalActions}>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.modalSubmitButton]}
-                  onPress={() => setShowCarteirinha(true)}
-                >
-                  <MaterialIcons name="credit-card" size={20} color="#fff" />
-                  <Text style={styles.modalButtonLabel}>
-                    Exportar Carteirinha
-                  </Text>
-                </TouchableOpacity>
-                
                 <TouchableOpacity
                   style={[styles.modalButton, styles.modalCancelButton]}
                   onPress={onClose}
@@ -228,15 +235,6 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
           </View>
         </KeyboardAvoidingView>
       </View>
-      
-      {/* Modal da Carteirinha */}
-      <PetCarteirinha
-        visible={showCarteirinha}
-        onClose={() => setShowCarteirinha(false)}
-        pet={pet}
-      />
     </Modal>
   );
-};
-
-export default ViewPetModal;
+}

@@ -7,7 +7,7 @@ const DEBUG = Environment.DEBUG_MODE;
 
 export const API_CONFIG = {
   BASE_URL: BASE_URL,
-  TIMEOUT: ENV_TYPE === 'production' ? 10000 : 5000, 
+  TIMEOUT: ENV_TYPE === 'production' ? 60000 : 30000, // Aumentado para chatbot (30s dev, 60s prod) 
   ENDPOINTS: {
     USERS: {
       REGISTER: '/users/register',
@@ -37,6 +37,16 @@ export const API_CONFIG = {
         COMPLETE: (petId: string) => `/pets-vacinas/${petId}/complete`,
         UPDATE: (id: string) => `/pets-vacinas/vacinas/${id}`,
         DELETE: (id: string) => `/pets-vacinas/vacinas/${id}`
+      }
+    },
+    CHATBOT: {
+      CHAT: '/chatbot/chat',
+      HEALTH: '/chatbot/health',
+      CONVERSATIONS: '/chatbot/conversations',
+      CONVERSATION: {
+        HISTORY: (conversationId: string) => `/chatbot/conversation/${conversationId}/history`,
+        CLEAR: (conversationId: string) => `/chatbot/conversation/${conversationId}/clear`,
+        END: (conversationId: string) => `/chatbot/conversation/${conversationId}`
       }
     }
   }

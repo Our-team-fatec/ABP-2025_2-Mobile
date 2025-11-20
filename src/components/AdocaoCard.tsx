@@ -1,51 +1,32 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, Pressable, Modal, Alert } from "react-native";
+import { View, Text, Image, TouchableOpacity, Pressable, Modal } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
 
-import type { PetData, PetStatusType } from '../types/pet';
+import type { PetData } from '../types/pet';
 
-interface PetCardProps {
+interface AdocaoCardProps {
   pet: PetData;
-  petId?: string;
+  adocaoId?: string;
+  descricao?: string;
+  endereco?: string;
   onView: () => void;
-  onDelete?: (petId: string) => void;
+  onDelete?: (adocaoId: string) => void;
   onEdit?: () => void;
-  showActions?: boolean; // Controla se mostra os botões de editar/excluir
-  hasAdocao?: boolean; // Se o pet tem anúncio de adoção
-  onCreateAdocao?: () => void; // Criar anúncio de adoção
-  onEditAdocao?: () => void; // Editar anúncio de adoção
-  onDeleteAdocao?: () => void; // Deletar anúncio de adoção
+  showActions?: boolean;
 }
 
-export default function PetCard({ 
+export default function AdocaoCard({ 
   pet, 
-  petId, 
+  adocaoId, 
+  descricao,
+  endereco,
   onView, 
   onDelete, 
   onEdit, 
-  showActions = true,
-  hasAdocao = false,
-  onCreateAdocao,
-  onEditAdocao,
-  onDeleteAdocao
-}: PetCardProps) {
+  showActions = true 
+}: AdocaoCardProps) {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-
-  const getStatusStyle = (status: PetStatusType | undefined) => {
-    switch (status) {
-      case "vacinacao":
-        return styles.petSucess;
-      case "consulta":
-        return styles.petNeutral;
-      case "aviso":
-        return styles.petAlert;
-      case "pendente":
-        return styles.petPendente;
-      default:
-        return {};
-    }
-  };
 
   const handleDeletePress = () => {
     setIsDeleteModalVisible(true);
@@ -53,8 +34,8 @@ export default function PetCard({
 
   const handleConfirmDelete = () => {
     setIsDeleteModalVisible(false);
-    if (onDelete && petId) {
-      onDelete(petId);
+    if (onDelete && adocaoId) {
+      onDelete(adocaoId);
     }
   };
 
@@ -107,53 +88,18 @@ export default function PetCard({
           {pet.color ? ` • ${pet.color}` : ""}
         </Text>
 
-        {pet.status && pet.status.length > 0 ? (
-          pet.status.map((s, i) => (
-            <Text key={i} style={[styles.petStatus, getStatusStyle(s.type)]}>
-              {s.label}
-            </Text>
-          ))
-        ) : (
-          <Text style={[styles.petStatus, styles.petNeutral]}>
-            Nenhum status registrado
+        {endereco && (
+          <Text style={[styles.petInfo, { marginTop: 4 }]}>
+            📍 {endereco}
+          </Text>
+        )}
+
+        {descricao && (
+          <Text style={[styles.petStatus, styles.petNeutral]} numberOfLines={2}>
+            {descricao}
           </Text>
         )}
       </View>
-      
-      {/* Botões de Adoção */}
-      {(onCreateAdocao || onEditAdocao || onDeleteAdocao) && (
-        <View style={styles.cardActions}>
-          {!hasAdocao && onCreateAdocao && (
-            <TouchableOpacity 
-              style={styles.adocaoButton} 
-              onPress={onCreateAdocao}
-            >
-              <MaterialIcons name="favorite" size={16} color="#fff" />
-              <Text style={styles.adocaoButtonText}>Anunciar</Text>
-            </TouchableOpacity>
-          )}
-          
-          {hasAdocao && onEditAdocao && (
-            <TouchableOpacity 
-              style={styles.adocaoButton} 
-              onPress={onEditAdocao}
-            >
-              <MaterialIcons name="edit" size={16} color="#fff" />
-              <Text style={styles.adocaoButtonText}>Editar Adoção</Text>
-            </TouchableOpacity>
-          )}
-          
-          {hasAdocao && onDeleteAdocao && (
-            <TouchableOpacity 
-              style={styles.deleteAdocaoButton} 
-              onPress={onDeleteAdocao}
-            >
-              <MaterialIcons name="delete" size={16} color="#fff" />
-              <Text style={styles.deleteAdocaoButtonText}>Remover</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
       
       <TouchableOpacity style={styles.viewButton} onPress={onView}>
         <MaterialIcons name="description" color="#74a57f" />
@@ -170,9 +116,9 @@ export default function PetCard({
         <View style={styles.modalOverlay}>
           <View style={styles.deleteModalContainer}>
             <MaterialIcons name="warning" size={48} color="#ef4444" style={styles.deleteModalIcon} />
-            <Text style={styles.deleteModalTitle}>Excluir Pet</Text>
+            <Text style={styles.deleteModalTitle}>Excluir Anúncio</Text>
             <Text style={styles.deleteModalMessage}>
-              Tem certeza que deseja excluir {pet.name}? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir o anúncio de adoção de {pet.name}? Esta ação não pode ser desfeita.
             </Text>
             <View style={styles.deleteModalButtons}>
               <Pressable

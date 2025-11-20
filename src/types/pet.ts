@@ -6,13 +6,15 @@ export interface PetStatus {
 }
 
 export interface PetData {
+  id?: string;
   name: string;
   species: string;
   breed: string;
   age: string;
-  weight?: string;
+  tutor?: string;
   gender: string;
   color?: string;
+  size?: string;
   status: PetStatus[];
   image?: {
     id: string;
