@@ -1,5 +1,9 @@
 import { http } from "../client/http";
 import { API_CONFIG } from "../config/api";
+import EventSourcePolyfill from 'react-native-sse';
+
+// URL dedicada para o chatbot - sempre usa Fly.dev
+const CHATBOT_BASE_URL = 'http://192.168.1.42:3000/api';
 
 export interface HistoryMessage {
   role: string;
@@ -46,67 +50,72 @@ export type StreamEvent =
 export type StreamCallback = (event: StreamEvent) => void;
 
 /**
- * Envia uma mensagem para o chatbot com streaming SSE
+ * Envia uma mensagem para o chatbot com streaming SSE real
+ * Usa react-native-sse para suportar Server-Sent Events no React Native
  */
 export async function sendChatMessageStream(
   message: string,
   conversationId: string | undefined,
   onEvent: StreamCallback
 ): Promise<void> {
-  const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CHATBOT.CHAT}/stream`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ message, conversationId }),
-  });
+  return new Promise((resolve, reject) => {
+    const url = `${CHATBOT_BASE_URL}${API_CONFIG.ENDPOINTS.CHATBOT.CHAT}/stream`;
+    console.log('🤖 Chatbot SSE URL:', url);
 
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
+    // Cria conexão SSE com POST
+    const eventSource = new EventSourcePolyfill(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        message, 
+        conversationId 
+      }),
+      pollingInterval: 0, // Desabilita polling, usa streaming puro
+    });
 
-  const reader = response.body?.getReader();
-  const decoder = new TextDecoder();
+    let hasError = false;
 
-  if (!reader) {
-    throw new Error('Stream não disponível');
-  }
-
-  try {
-    let buffer = '';
-    
-    while (true) {
-      const { done, value } = await reader.read();
-      
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      
-      // Mantém a última linha incompleta no buffer
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6).trim();
-          if (data) {
-            try {
-              const event: StreamEvent = JSON.parse(data);
-              onEvent(event);
-              
-              if (event.type === 'done' || event.type === 'error') {
-                return;
-              }
-            } catch (e) {
-              console.error('Erro ao parsear evento SSE:', e);
-            }
-          }
+    // Handler para mensagens SSE
+    eventSource.addEventListener('message', (event: any) => {
+      try {
+        const data = JSON.parse(event.data);
+        const streamEvent: StreamEvent = data;
+        
+        onEvent(streamEvent);
+        
+        // Fecha conexão quando receber done ou error
+        if (streamEvent.type === 'done') {
+          eventSource.close();
+          resolve();
+        } else if (streamEvent.type === 'error') {
+          hasError = true;
+          eventSource.close();
+          reject(new Error(streamEvent.error));
         }
+      } catch (e) {
+        console.error('❌ Erro ao parsear evento SSE:', e);
       }
-    }
-  } finally {
-    reader.releaseLock();
-  }
+    });
+
+    // Handler para erros de conexão
+    eventSource.addEventListener('error', (event: any) => {
+      console.error('❌ Erro na conexão SSE:', event);
+      eventSource.close();
+      
+      if (!hasError) {
+        const errorMessage = 'Erro na conexão com o servidor';
+        onEvent({ type: 'error', error: errorMessage });
+        reject(new Error(errorMessage));
+      }
+    });
+
+    // Handler para abertura da conexão
+    eventSource.addEventListener('open', () => {
+      console.log('✅ Conexão SSE estabelecida');
+    });
+  });
 }
 
 /**
@@ -145,12 +154,19 @@ export async function sendChatMessage(
  * Limpa o histórico de uma conversa
  */
 export async function clearConversation(conversationId: string): Promise<ApiMessageResponse> {
-  return http<ApiMessageResponse>(
-    API_CONFIG.ENDPOINTS.CHATBOT.CONVERSATION.CLEAR(conversationId),
-    {
-      method: "POST",
-    }
-  );
+  // Usa fetch direto com URL do Fly.dev para garantir que vai para o servidor correto
+  const response = await fetch(`${CHATBOT_BASE_URL}${API_CONFIG.ENDPOINTS.CHATBOT.CONVERSATION.CLEAR(conversationId)}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return response.json();
 }
 
 /**
