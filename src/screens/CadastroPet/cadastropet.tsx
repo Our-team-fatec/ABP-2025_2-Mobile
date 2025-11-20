@@ -23,6 +23,7 @@ export default function CadastroPet() {
   const [editingPet, setEditingPet] = useState<Pet | null>(null);
 
   const convertPetToPetData = (pet: Pet): PetData => ({
+    id: pet.id,
     name: pet.nome,
     species: pet.especie === 'CACHORRO' ? 'Cachorro' : 'Gato',
     breed: pet.raca,

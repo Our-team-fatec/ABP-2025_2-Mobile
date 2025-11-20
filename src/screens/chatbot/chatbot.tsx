@@ -389,7 +389,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingBottom: 80, // Espaço para o Footer
   },
   chatHeader: {
     flexDirection: 'row',
@@ -442,7 +441,7 @@ const styles = StyleSheet.create({
   },
   messagesContent: {
     padding: 15,
-    paddingBottom: 140,
+    paddingBottom: 100,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -570,7 +569,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#e0e0e0',
     gap: 10,
     position: 'absolute',
-    bottom: 60,
+    bottom: 85,
     left: 0,
     right: 0,
     zIndex: 100,

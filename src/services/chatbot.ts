@@ -1,9 +1,10 @@
 import { http } from "../client/http";
 import { API_CONFIG } from "../config/api";
 import EventSourcePolyfill from 'react-native-sse';
+import { Environment } from '../utils/environment';
 
-// URL dedicada para o chatbot - sempre usa Fly.dev
-const CHATBOT_BASE_URL = 'http://192.168.1.42:3000/api';
+// URL do chatbot - usa a mesma configuração da API
+const CHATBOT_BASE_URL = Environment.API_BASE_URL;
 
 export interface HistoryMessage {
   role: string;

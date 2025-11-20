@@ -18,6 +18,10 @@ export default function Home() {
     navigation.navigate('AdocaoPet');
   };
 
+  const handleNavigateToChatbot = () => {
+    navigation.navigate('Chatbot');
+  };
+
   return (
     <View style={styles.container}>
       {/* Header fixo no topo */}
@@ -61,12 +65,18 @@ export default function Home() {
             </Text>
           </Pressable>
 
-          <View style={styles.chatBotButton}>
+          <Pressable 
+            style={({ pressed }) => [
+              styles.chatBotButton,
+              pressed && styles.chatBotButtonPressed
+            ]}
+            onPress={handleNavigateToChatbot}
+          >
             <Text style={styles.chatBotButtonTitle}>💬 Chat Bot</Text>
             <Text style={styles.chatBotButtonSubtitle}>
               Tire todas as dúvidas de cuidados com seu pet
             </Text>
-          </View>
+          </Pressable>
           
           {/* <View style={styles.contentSection}>
             <Text style={styles.sectionTitle}>Serviços</Text>
@@ -187,7 +197,7 @@ const styles = StyleSheet.create({
     opacity: 0.95,
   },
   chatBotButton: {
-    backgroundColor: '#d3d3d3',
+    backgroundColor: '#667eea',
     padding: 20,
     marginBottom: 20,
     borderRadius: 16,
@@ -199,20 +209,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 5,
-    opacity: 0.6,
+  },
+  chatBotButtonPressed: {
+    backgroundColor: '#5568d3',
+    transform: [{ scale: 0.98 }],
   },
   chatBotButtonTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#666',
+    color: 'white',
     textAlign: 'center',
     marginBottom: 6,
   },
   chatBotButtonSubtitle: {
     fontSize: 14,
-    color: '#666',
+    color: 'white',
     textAlign: 'center',
-    opacity: 0.8,
+    opacity: 0.95,
   },
   contentSection: {
     backgroundColor: 'white',

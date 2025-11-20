@@ -30,7 +30,10 @@ const PetCarteirinha: React.FC<PetCarteirinhaProps> = ({ visible, onClose, pet }
 
   const petImage = pet.images?.[0]?.url || pet.image?.url || null;
   const currentDate = new Date().toLocaleDateString("pt-BR");
-  const petId = `PET${Date.now().toString().slice(-8)}`;
+  
+  // Usa ID do pet se existir, senão usa pet_id da imagem, ou fallback para timestamp
+  const rawId = pet.id || pet.images?.[0]?.pet_id || pet.image?.pet_id || Date.now().toString();
+  const petId = `PET${rawId.slice(-4)}`;
 
   const handleExport = async () => {
     try {
@@ -326,25 +329,25 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   carteirinhaBody: {
-    padding: 20,
+    padding: 15,
     backgroundColor: "#fff",
   },
   photoContainer: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   petPhoto: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 4,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
     borderColor: "#4a9d6f",
   },
   petPhotoPlaceholder: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 4,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
     borderColor: "#4a9d6f",
     backgroundColor: "#f0f9f4",
     justifyContent: "center",
@@ -353,26 +356,29 @@ const styles = StyleSheet.create({
   infoGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    justifyContent: "space-between",
   },
   infoItem: {
-    width: "48%",
+    flexBasis: "48%",
     backgroundColor: "#f8f9fa",
-    padding: 12,
+    padding: 10,
     borderRadius: 8,
     borderLeftWidth: 4,
     borderLeftColor: "#4a9d6f",
+    marginBottom: 8,
   },
   infoLabel: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: "bold",
     color: "#2d5f3f",
-    marginBottom: 4,
+    marginBottom: 2,
+    letterSpacing: 0.5,
   },
   infoValue: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#333",
     fontWeight: "500",
+    numberOfLines: 1,
   },
   carteirinhaFooter: {
     backgroundColor: "#f8f9fa",

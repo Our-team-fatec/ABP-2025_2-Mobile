@@ -38,6 +38,7 @@ export default function AdocaoPet() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const convertPetToPetData = (pet: Pet): PetData => ({
+    id: pet.id,
     name: pet.nome,
     species: pet.especie === 'CACHORRO' ? 'Cachorro' : 'Gato',
     breed: pet.raca,

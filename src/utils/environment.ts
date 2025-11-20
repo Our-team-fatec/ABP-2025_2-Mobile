@@ -3,8 +3,20 @@ import {
   API_BASE_URL, 
   DEBUG_MODE, 
   APP_NAME, 
-  APP_VERSION 
+  APP_VERSION
 } from '@env';
+
+/**
+ * URL base local para desenvolvimento
+ * ALTERE AQUI para usar seu IP local quando precisar testar com backend local
+ * Para usar: mude API_BASE_URL no .env para http://SEU_IP:3000/api
+ */
+export const LOCAL_DEV_URL = 'https://davinci-pets-server.fly.dev/api';
+
+/**
+ * URL de produção (Fly.dev)
+ */
+export const PRODUCTION_URL = 'https://davinci-pets-server.fly.dev/api';
 
 /**
  * Utilitário para acessar variáveis de ambiente de forma segura
@@ -20,11 +32,12 @@ export const Environment = {
   IS_DEV: NODE_ENV === 'development',
   IS_PROD: NODE_ENV === 'production',
   
-  // API - Com fallback para a URL de produção
-  API_BASE_URL: API_BASE_URL || 'http://192.168.1.42:3000/api',
+  // API - Usa variável do .env ou fallback para produção
+  API_BASE_URL: API_BASE_URL || PRODUCTION_URL,
   
-  // Chatbot - Sempre usa Fly.dev porque o streaming SSE não está no backend local
-  CHATBOT_BASE_URL: 'http://192.168.1.42:3000/api',
+  // URLs disponíveis
+  LOCAL_DEV_URL,
+  PRODUCTION_URL,
   
   // Debug
   DEBUG_MODE: DEBUG_MODE === 'true',
@@ -43,7 +56,7 @@ export const Environment = {
   // Informações do ambiente atual
   getInfo: () => ({
     environment: NODE_ENV,
-    apiUrl: API_BASE_URL || 'http://192.168.1.42:3000/api',
+    apiUrl: API_BASE_URL || 'https://davinci-pets-back.fly.dev/api',
     debug: DEBUG_MODE === 'true',
     version: APP_VERSION,
   })

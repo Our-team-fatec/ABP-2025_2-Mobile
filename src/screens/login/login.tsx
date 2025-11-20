@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useForm, Controller, FieldErrors } from "react-hook-form";
@@ -43,7 +44,13 @@ export default function Login({ navigation }: Props) {
 
   const handleLogin = async (data: Form) => {
     try {
+      console.log('⏳ Iniciando login...');
+      const startTime = Date.now();
+      
       const response = await loginUser(data);
+      
+      const endTime = Date.now();
+      console.log(`✅ Login concluído em ${(endTime - startTime) / 1000}s`);
 
       // Salva o token no AsyncStorage
       await AsyncStorage.setItem(
@@ -184,9 +191,14 @@ export default function Login({ navigation }: Props) {
                 onPress={handleSubmit(handleLogin, handleLoginError)}
                 disabled={isSubmitting}
               >
-                <Text style={styles.buttonText}>
-                  {isSubmitting ? "Entrando..." : "Entrar"}
-                </Text>
+                {isSubmitting ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <ActivityIndicator color="#fff" size="small" />
+                    <Text style={styles.buttonText}>Entrando...</Text>
+                  </View>
+                ) : (
+                  <Text style={styles.buttonText}>Entrar</Text>
+                )}
               </TouchableOpacity>
 
               <View style={styles.separatorContainer}>
