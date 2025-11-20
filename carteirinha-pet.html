@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteirinha Pet - Da Vinci Pets</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2d5f3f 0%, #4a9d6f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .controls h2 {
+            color: #2d5f3f;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #2d5f3f;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #4a9d6f;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #2d5f3f;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #4a9d6f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2d5f3f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 157, 111, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .carteirinha {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .carteirinha-header {
+            background: linear-gradient(135deg, #2d5f3f 0%, #4a9d6f 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .carteirinha-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .carteirinha-header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .carteirinha-body {
+            padding: 30px;
+        }
+
+        .pet-photo-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .pet-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #4a9d6f;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .pet-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #4a9d6f;
+            border-radius: 5px;
+        }
+
+        .info-item label {
+            display: block;
+            color: #2d5f3f;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .info-item span {
+            display: block;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .carteirinha-footer {
+            background: #f8f9fa;
+            padding: 15px;
+            border-top: 2px solid #4a9d6f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-item {
+            text-align: center;
+        }
+
+        .footer-item label {
+            display: block;
+            color: #6c757d;
+            font-size: 0.75em;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .footer-item span {
+            display: block;
+            color: #2d5f3f;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .no-print {
+            /* Visible on screen */
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .carteirinha {
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+
+        .list-group {
+            background: white;
+            border-radius: 8px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item:hover {
+            background: #f8f9fa;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.85em;
+            min-width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header no-print">
+            <h1>🐾 Carteirinha Pet</h1>
+            <p>Sistema de Identificação de Pets - Da Vinci Pets</p>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Controles -->
+        <div class="controls no-print">
+            <h2>Gerenciar Carteirinha</h2>
+            
+            <div class="input-group">
+                <label for="petId">ID do Pet (Firestore)</label>
+                <input type="text" id="petId" placeholder="Digite o ID do pet ou deixe vazio para novo">
+            </div>
+
+            <div class="input-group">
+                <label for="nome">Nome do Pet</label>
+                <input type="text" id="nome" placeholder="Ex: Rex">
+            </div>
+
+            <div class="input-group">
+                <label for="raca">Raça</label>
+                <input type="text" id="raca" placeholder="Ex: Labrador">
+            </div>
+
+            <div class="input-group">
+                <label for="idade">Idade</label>
+                <input type="text" id="idade" placeholder="Ex: 3 anos">
+            </div>
+
+            <div class="input-group">
+                <label for="genero">Sexo</label>
+                <select id="genero">
+                    <option value="">Selecione...</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Fêmea">Fêmea</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="cor">Cor</label>
+                <input type="text" id="cor" placeholder="Ex: Caramelo">
+            </div>
+
+            <div class="input-group">
+                <label for="porte">Porte</label>
+                <select id="porte">
+                    <option value="">Selecione...</option>
+                    <option value="Pequeno">Pequeno</option>
+                    <option value="Médio">Médio</option>
+                    <option value="Grande">Grande</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="foto">URL da Foto</label>
+                <input type="text" id="foto" placeholder="https://exemplo.com/foto.jpg">
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="salvarPet()">💾 Salvar no Firestore</button>
+                <button class="btn-secondary" onclick="carregarPet()">📥 Carregar do Firestore</button>
+                <button class="btn-secondary" onclick="listarPets()">📋 Listar Todos</button>
+                <button class="btn-danger" onclick="limparFormulario()">🗑️ Limpar</button>
+            </div>
+
+            <div id="petList"></div>
+        </div>
+
+        <!-- Carteirinha -->
+        <div class="carteirinha">
+            <div class="carteirinha-header">
+                <h2>🐾 CARTEIRINHA PET</h2>
+                <p>Da Vinci Pets - Identificação Oficial</p>
+            </div>
+
+            <div class="carteirinha-body">
+                <div class="pet-photo-container">
+                    <img id="displayFoto" 
+                         src="https://via.placeholder.com/200/4a9d6f/ffffff?text=Foto+do+Pet" 
+                         alt="Foto do Pet" 
+                         class="pet-photo">
+                </div>
+
+                <div class="pet-info">
+                    <div class="info-item">
+                        <label>Nome</label>
+                        <span id="displayNome">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Raça</label>
+                        <span id="displayRaca">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Idade</label>
+                        <span id="displayIdade">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Sexo</label>
+                        <span id="displayGenero">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Cor</label>
+                        <span id="displayCor">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Porte</label>
+                        <span id="displayPorte">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carteirinha-footer">
+                <div class="footer-item">
+                    <label>ID de Registro</label>
+                    <span id="displayId">-</span>
+                </div>
+                <div class="footer-item">
+                    <label>Data de Expedição</label>
+                    <span id="displayData">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group no-print" style="margin-top: 30px; justify-content: center;">
+            <button class="btn-primary" onclick="exportarPDF()">🖨️ Exportar / Imprimir PDF</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Configuração do Firebase - SUBSTITUA COM SUAS CREDENCIAIS
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJECT_ID.firebaseapp.com",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_PROJECT_ID.appspot.com",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log('Firebase inicializado com sucesso!');
+        } catch (error) {
+            console.error('Erro ao inicializar Firebase:', error);
+            mostrarMensagem('Erro ao conectar com o Firebase. Verifique as configurações.', 'error');
+        }
+
+        // Disponibilizar globalmente
+        window.db = db;
+        window.firestore = { collection, doc, setDoc, getDoc, getDocs, deleteDoc };
+    </script>
+
+    <script>
+        // Função para mostrar mensagens
+        function mostrarMensagem(mensagem, tipo = 'success') {
+            const container = document.getElementById('messageContainer');
+            const div = document.createElement('div');
+            div.className = tipo === 'error' ? 'error no-print' : 'success no-print';
+            div.textContent = mensagem;
+            container.innerHTML = '';
+            container.appendChild(div);
+            
+            setTimeout(() => {
+                div.remove();
+            }, 5000);
+        }
+
+        // Função para atualizar a visualização da carteirinha
+        function atualizarCarteirinha(dados) {
+            document.getElementById('displayNome').textContent = dados.nome || '-';
+            document.getElementById('displayRaca').textContent = dados.raca || '-';
+            document.getElementById('displayIdade').textContent = dados.idade || '-';
+            document.getElementById('displayGenero').textContent = dados.genero || '-';
+            document.getElementById('displayCor').textContent = dados.cor || '-';
+            document.getElementById('displayPorte').textContent = dados.porte || '-';
+            document.getElementById('displayId').textContent = dados.id || '-';
+            document.getElementById('displayData').textContent = dados.dataExpedicao || new Date().toLocaleDateString('pt-BR');
+            
+            // Atualizar foto
+            const fotoUrl = dados.foto || (dados.imagens && dados.imagens.length > 0 ? dados.imagens[0].url : null);
+            if (fotoUrl) {
+                document.getElementById('displayFoto').src = fotoUrl;
+            } else {
+                document.getElementById('displayFoto').src = 'https://via.placeholder.com/200/4a9d6f/ffffff?text=Foto+do+Pet';
+            }
+        }
+
+        // Função para preencher o formulário
+        function preencherFormulario(dados) {
+            document.getElementById('petId').value = dados.id || '';
+            document.getElementById('nome').value = dados.nome || '';
+            document.getElementById('raca').value = dados.raca || '';
+            document.getElementById('idade').value = dados.idade || '';
+            document.getElementById('genero').value = dados.genero || '';
+            document.getElementById('cor').value = dados.cor || '';
+            document.getElementById('porte').value = dados.porte || '';
+            
+            const fotoUrl = dados.foto || (dados.imagens && dados.imagens.length > 0 ? dados.imagens[0].url : '');
+            document.getElementById('foto').value = fotoUrl;
+        }
+
+        // Salvar pet no Firestore
+        async function salvarPet() {
+            try {
+                const petId = document.getElementById('petId').value.trim() || 'pet_' + Date.now();
+                const dados = {
+                    id: petId,
+                    nome: document.getElementById('nome').value,
+                    raca: document.getElementById('raca').value,
+                    idade: document.getElementById('idade').value,
+                    genero: document.getElementById('genero').value,
+                    cor: document.getElementById('cor').value,
+                    porte: document.getElementById('porte').value,
+                    foto: document.getElementById('foto').value,
+                    dataExpedicao: new Date().toLocaleDateString('pt-BR'),
+                    dataAtualizacao: new Date().toISOString()
+                };
+
+                if (!dados.nome) {
+                    mostrarMensagem('Por favor, preencha pelo menos o nome do pet.', 'error');
+                    return;
+                }
+
+                const docRef = window.firestore.doc(window.db, 'pets', petId);
+                await window.firestore.setDoc(docRef, dados);
+                
+                document.getElementById('petId').value = petId;
+                atualizarCarteirinha(dados);
+                mostrarMensagem('Pet salvo com sucesso no Firestore!');
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                mostrarMensagem('Erro ao salvar no Firestore: ' + error.message, 'error');
+            }
+        }
+
+        // Carregar pet do Firestore
+        async function carregarPet() {
+            try {
+                const petId = document.getElementById('petId').value.trim();
+                if (!petId) {
+                    mostrarMensagem('Digite o ID do pet para carregar.', 'error');
+                    return;
+                }
+
+                const docRef = window.firestore.doc(window.db, 'pets', petId);
+                const docSnap = await window.firestore.getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const dados = docSnap.data();
+                    preencherFormulario(dados);
+                    atualizarCarteirinha(dados);
+                    mostrarMensagem('Pet carregado com sucesso!');
+                } else {
+                    mostrarMensagem('Pet não encontrado no Firestore.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar:', error);
+                mostrarMensagem('Erro ao carregar do Firestore: ' + error.message, 'error');
+            }
+        }
+
+        // Listar todos os pets
+        async function listarPets() {
+            try {
+                const querySnapshot = await window.firestore.getDocs(
+                    window.firestore.collection(window.db, 'pets')
+                );
+                
+                const listContainer = document.getElementById('petList');
+                listContainer.innerHTML = '<h3 style="color: #2d5f3f; margin-top: 20px;">Pets Cadastrados:</h3>';
+                
+                if (querySnapshot.empty) {
+                    listContainer.innerHTML += '<p style="color: #6c757d; padding: 10px;">Nenhum pet cadastrado ainda.</p>';
+                    return;
+                }
+
+                const listGroup = document.createElement('div');
+                listGroup.className = 'list-group';
+
+                querySnapshot.forEach((doc) => {
+                    const dados = doc.data();
+                    const listItem = document.createElement('div');
+                    listItem.className = 'list-item';
+                    listItem.innerHTML = `
+                        <div>
+                            <strong>${dados.nome || 'Sem nome'}</strong> - ${dados.raca || 'Sem raça'}
+                            <br><small style="color: #6c757d;">ID: ${doc.id}</small>
+                        </div>
+                        <div>
+                            <button class="btn-primary btn-small" onclick="carregarPetPorId('${doc.id}')">Carregar</button>
+                            <button class="btn-danger btn-small" onclick="excluirPet('${doc.id}')">Excluir</button>
+                        </div>
+                    `;
+                    listGroup.appendChild(listItem);
+                });
+
+                listContainer.appendChild(listGroup);
+            } catch (error) {
+                console.error('Erro ao listar:', error);
+                mostrarMensagem('Erro ao listar pets: ' + error.message, 'error');
+            }
+        }
+
+        // Carregar pet por ID (chamado da lista)
+        async function carregarPetPorId(id) {
+            document.getElementById('petId').value = id;
+            await carregarPet();
+        }
+
+        // Excluir pet
+        async function excluirPet(id) {
+            if (!confirm('Tem certeza que deseja excluir este pet?')) {
+                return;
+            }
+
+            try {
+                await window.firestore.deleteDoc(
+                    window.firestore.doc(window.db, 'pets', id)
+                );
+                mostrarMensagem('Pet excluído com sucesso!');
+                listarPets();
+            } catch (error) {
+                console.error('Erro ao excluir:', error);
+                mostrarMensagem('Erro ao excluir pet: ' + error.message, 'error');
+            }
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            document.getElementById('petId').value = '';
+            document.getElementById('nome').value = '';
+            document.getElementById('raca').value = '';
+            document.getElementById('idade').value = '';
+            document.getElementById('genero').value = '';
+            document.getElementById('cor').value = '';
+            document.getElementById('porte').value = '';
+            document.getElementById('foto').value = '';
+            
+            atualizarCarteirinha({});
+            mostrarMensagem('Formulário limpo!');
+        }
+
+        // Exportar/Imprimir PDF
+        function exportarPDF() {
+            window.print();
+        }
+
+        // Disponibilizar funções globalmente
+        window.salvarPet = salvarPet;
+        window.carregarPet = carregarPet;
+        window.listarPets = listarPets;
+        window.carregarPetPorId = carregarPetPorId;
+        window.excluirPet = excluirPet;
+        window.limparFormulario = limparFormulario;
+        window.exportarPDF = exportarPDF;
+
+        // Atualizar visualização em tempo real
+        document.querySelectorAll('#nome, #raca, #idade, #genero, #cor, #porte, #foto').forEach(input => {
+            input.addEventListener('input', () => {
+                const dados = {
+                    id: document.getElementById('petId').value || '-',
+                    nome: document.getElementById('nome').value,
+                    raca: document.getElementById('raca').value,
+                    idade: document.getElementById('idade').value,
+                    genero: document.getElementById('genero').value,
+                    cor: document.getElementById('cor').value,
+                    porte: document.getElementById('porte').value,
+                    foto: document.getElementById('foto').value,
+                    dataExpedicao: new Date().toLocaleDateString('pt-BR')
+                };
+                atualizarCarteirinha(dados);
+            });
+        });
+    </script>
+</body>
+</html>

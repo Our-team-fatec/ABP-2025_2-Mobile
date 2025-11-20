@@ -500,6 +500,10 @@ export const cadastroPetStyles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
   },
   modalButtonLabel: {
     fontSize: 14,
@@ -514,6 +518,9 @@ export const cadastroPetStyles = StyleSheet.create({
   },
   modalCancelButtonLabel: {
     color: "#374151",
+  },
+  modalSubmitButton: {
+    backgroundColor: "#10b981",
   },
   modalPrimaryButton: {
     backgroundColor: "#10b981",
@@ -777,17 +784,6 @@ export const cadastroPetStyles = StyleSheet.create({
   },
   filterButtonTextActive: {
     color: "#fff",
-  },
-  addButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#74a57e",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    gap: 8,
   },
   addButtonText: {
     fontSize: 14,

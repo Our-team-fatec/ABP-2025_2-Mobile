@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { cadastroPetStyles as styles } from "../styles/cadastroPet";
+import PetCarteirinha from "./PetCarteirinha";
 
 import type { PetData } from '../types/pet';
 
@@ -27,11 +28,13 @@ interface ViewPetModalProps {
 
 const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showCarteirinha, setShowCarteirinha] = useState(false);
   
   // Reset do índice quando o modal abre ou o pet muda
   useEffect(() => {
     if (visible) {
       setCurrentImageIndex(0);
+      setShowCarteirinha(false);
     }
   }, [visible, pet]);
   
@@ -196,6 +199,16 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
 
               <View style={styles.modalActions}>
                 <TouchableOpacity
+                  style={[styles.modalButton, styles.modalSubmitButton]}
+                  onPress={() => setShowCarteirinha(true)}
+                >
+                  <MaterialIcons name="credit-card" size={20} color="#fff" />
+                  <Text style={styles.modalButtonLabel}>
+                    Exportar Carteirinha
+                  </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
                   style={[styles.modalButton, styles.modalCancelButton]}
                   onPress={onClose}
                 >
@@ -208,6 +221,13 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
           </View>
         </KeyboardAvoidingView>
       </View>
+      
+      {/* Modal da Carteirinha */}
+      <PetCarteirinha
+        visible={showCarteirinha}
+        onClose={() => setShowCarteirinha(false)}
+        pet={pet}
+      />
     </Modal>
   );
 };
