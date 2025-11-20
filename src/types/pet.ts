@@ -10,9 +10,10 @@ export interface PetData {
   species: string;
   breed: string;
   age: string;
-  weight?: string;
+  tutor?: string;
   gender: string;
   color?: string;
+  size?: string;
   status: PetStatus[];
   image?: {
     id: string;

@@ -174,10 +174,10 @@ export default function ViewAdocaoModal({
                     </View>
                   )}
 
-                  {pet.weight && (
+                  {pet.size && (
                     <View style={styles.modalField}>
                       <Text style={styles.modalLabel}>Porte</Text>
-                      <Text style={styles.modalInput}>{pet.weight}</Text>
+                      <Text style={styles.modalInput}>{pet.size}</Text>
                     </View>
                   )}
                 </View>
