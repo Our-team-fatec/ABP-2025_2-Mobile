@@ -162,10 +162,17 @@ const ViewPetModal: React.FC<ViewPetModalProps> = ({ visible, onClose, pet }) =>
                     <Text style={styles.modalInput}>{pet.age}</Text>
                   </View>
 
-                  {pet.weight && (
+                  {pet.size && (
                     <View style={styles.modalField}>
-                      <Text style={styles.modalLabel}>Peso</Text>
-                      <Text style={styles.modalInput}>{pet.weight}</Text>
+                      <Text style={styles.modalLabel}>Porte</Text>
+                      <Text style={styles.modalInput}>{pet.size}</Text>
+                    </View>
+                  )}
+
+                  {pet.tutor && (
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Tutor</Text>
+                      <Text style={styles.modalInput}>{pet.tutor}</Text>
                     </View>
                   )}
 

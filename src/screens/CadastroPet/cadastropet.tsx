@@ -29,13 +29,16 @@ export default function CadastroPet() {
     gender: pet.genero === 'MACHO' ? 'Macho' : 'Fêmea',
     age: pet.idade ? `${pet.idade}` : 'Não informada',
     color: pet.cor,
+    size: pet.porte === 'PEQUENO' ? 'Pequeno' : 
+          pet.porte === 'MEDIO' ? 'Médio' : 'Grande',
+    tutor: pet.tutor?.nome,
     image: pet.imagens?.[0],
     images: pet.imagens,
     status: pet.status?.map(s => ({
       label: s.label,
       type: (s.type === 'PENDENTE' ? 'pendente' : 
             s.type === 'EM_DIA' ? 'aviso' : 
-            s.type === 'ALERTA' ? 'consulta' : 'vacinacao') 
+            s.type === 'ALERTA' ? 'consulta' : 'vacinacao') as any
     })) || []
   });
 
@@ -339,8 +342,7 @@ export default function CadastroPet() {
                   gender: pet.genero === 'MACHO' ? 'Macho' : 'Fêmea',
                   age: `Cadastrado em ${new Date(pet.criado_em).toLocaleDateString('pt-BR')}`,
                   image: pet.imagens?.[0],
-                  weight: pet.porte === 'PEQUENO' ? 'Pequeno porte' : 
-                         pet.porte === 'MEDIO' ? 'Médio porte' : 'Grande porte',
+                  tutor: pet.tutor?.nome,
                   color: pet.cor,
                   status: pet.status?.map(s => ({
                     label: s.label,

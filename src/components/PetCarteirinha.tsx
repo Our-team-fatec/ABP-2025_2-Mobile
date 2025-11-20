@@ -13,7 +13,6 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 
 import type { PetData } from "../types/pet";
@@ -98,19 +97,16 @@ const PetCarteirinha: React.FC<PetCarteirinhaProps> = ({ visible, onClose, pet }
         return;
       }
 
-      // Cria um nome de arquivo único
-      const fileName = `carteirinha_${pet.name.replace(/\s/g, "_")}_${Date.now()}.png`;
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-
-      // Copia o arquivo para o diretório de documentos
-      await FileSystem.copyAsync({
-        from: uri,
-        to: fileUri,
-      });
-
-      // Salva na galeria
-      const asset = await MediaLibrary.createAssetAsync(fileUri);
-      await MediaLibrary.createAlbumAsync("Da Vinci Pets", asset, false);
+      // Salva diretamente na galeria usando a URI capturada
+      const asset = await MediaLibrary.createAssetAsync(uri);
+      
+      // Tenta criar o álbum ou adicionar à galeria
+      try {
+        await MediaLibrary.createAlbumAsync("Da Vinci Pets", asset, false);
+      } catch (albumError) {
+        // Se falhar ao criar álbum, a imagem já está salva na galeria principal
+        console.log("Imagem salva na galeria principal");
+      }
 
       Alert.alert("Sucesso!", "Carteirinha salva na galeria com sucesso!");
     } catch (error) {
@@ -184,6 +180,11 @@ const PetCarteirinha: React.FC<PetCarteirinhaProps> = ({ visible, onClose, pet }
                     </View>
 
                     <View style={styles.infoItem}>
+                      <Text style={styles.infoLabel}>ESPÉCIE</Text>
+                      <Text style={styles.infoValue}>{pet.species || '-'}</Text>
+                    </View>
+
+                    <View style={styles.infoItem}>
                       <Text style={styles.infoLabel}>RAÇA</Text>
                       <Text style={styles.infoValue}>{pet.breed}</Text>
                     </View>
@@ -198,19 +199,20 @@ const PetCarteirinha: React.FC<PetCarteirinhaProps> = ({ visible, onClose, pet }
                       <Text style={styles.infoValue}>{formatGender(pet.gender)}</Text>
                     </View>
 
-                    {pet.color && (
-                      <View style={styles.infoItem}>
-                        <Text style={styles.infoLabel}>COR</Text>
-                        <Text style={styles.infoValue}>{pet.color}</Text>
-                      </View>
-                    )}
+                    <View style={styles.infoItem}>
+                      <Text style={styles.infoLabel}>COR</Text>
+                      <Text style={styles.infoValue}>{pet.color || '-'}</Text>
+                    </View>
 
-                    {pet.weight && (
-                      <View style={styles.infoItem}>
-                        <Text style={styles.infoLabel}>PESO</Text>
-                        <Text style={styles.infoValue}>{pet.weight}</Text>
-                      </View>
-                    )}
+                    <View style={styles.infoItem}>
+                      <Text style={styles.infoLabel}>PORTE</Text>
+                      <Text style={styles.infoValue}>{pet.size || '-'}</Text>
+                    </View>
+
+                    <View style={styles.infoItem}>
+                      <Text style={styles.infoLabel}>TUTOR</Text>
+                      <Text style={styles.infoValue}>{pet.tutor || '-'}</Text>
+                    </View>
                   </View>
                 </View>
 

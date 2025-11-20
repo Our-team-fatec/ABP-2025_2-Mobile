@@ -351,6 +351,17 @@
             </div>
 
             <div class="input-group">
+                <label for="especie">Espécie</label>
+                <select id="especie">
+                    <option value="">Selecione...</option>
+                    <option value="Cachorro">Cachorro</option>
+                    <option value="Gato">Gato</option>
+                    <option value="Pássaro">Pássaro</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+
+            <div class="input-group">
                 <label for="genero">Sexo</label>
                 <select id="genero">
                     <option value="">Selecione...</option>
@@ -372,6 +383,11 @@
                     <option value="Médio">Médio</option>
                     <option value="Grande">Grande</option>
                 </select>
+            </div>
+
+            <div class="input-group">
+                <label for="tutor">Tutor</label>
+                <input type="text" id="tutor" placeholder="Ex: João Silva">
             </div>
 
             <div class="input-group">
@@ -410,6 +426,10 @@
                         <span id="displayNome">-</span>
                     </div>
                     <div class="info-item">
+                        <label>Espécie</label>
+                        <span id="displayEspecie">-</span>
+                    </div>
+                    <div class="info-item">
                         <label>Raça</label>
                         <span id="displayRaca">-</span>
                     </div>
@@ -428,6 +448,10 @@
                     <div class="info-item">
                         <label>Porte</label>
                         <span id="displayPorte">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Tutor</label>
+                        <span id="displayTutor">-</span>
                     </div>
                 </div>
             </div>
@@ -498,11 +522,13 @@
         // Função para atualizar a visualização da carteirinha
         function atualizarCarteirinha(dados) {
             document.getElementById('displayNome').textContent = dados.nome || '-';
+            document.getElementById('displayEspecie').textContent = dados.especie || '-';
             document.getElementById('displayRaca').textContent = dados.raca || '-';
             document.getElementById('displayIdade').textContent = dados.idade || '-';
             document.getElementById('displayGenero').textContent = dados.genero || '-';
             document.getElementById('displayCor').textContent = dados.cor || '-';
             document.getElementById('displayPorte').textContent = dados.porte || '-';
+            document.getElementById('displayTutor').textContent = dados.tutor || '-';
             document.getElementById('displayId').textContent = dados.id || '-';
             document.getElementById('displayData').textContent = dados.dataExpedicao || new Date().toLocaleDateString('pt-BR');
             
@@ -519,11 +545,13 @@
         function preencherFormulario(dados) {
             document.getElementById('petId').value = dados.id || '';
             document.getElementById('nome').value = dados.nome || '';
+            document.getElementById('especie').value = dados.especie || '';
             document.getElementById('raca').value = dados.raca || '';
             document.getElementById('idade').value = dados.idade || '';
             document.getElementById('genero').value = dados.genero || '';
             document.getElementById('cor').value = dados.cor || '';
             document.getElementById('porte').value = dados.porte || '';
+            document.getElementById('tutor').value = dados.tutor || '';
             
             const fotoUrl = dados.foto || (dados.imagens && dados.imagens.length > 0 ? dados.imagens[0].url : '');
             document.getElementById('foto').value = fotoUrl;
@@ -536,11 +564,13 @@
                 const dados = {
                     id: petId,
                     nome: document.getElementById('nome').value,
+                    especie: document.getElementById('especie').value,
                     raca: document.getElementById('raca').value,
                     idade: document.getElementById('idade').value,
                     genero: document.getElementById('genero').value,
                     cor: document.getElementById('cor').value,
                     porte: document.getElementById('porte').value,
+                    tutor: document.getElementById('tutor').value,
                     foto: document.getElementById('foto').value,
                     dataExpedicao: new Date().toLocaleDateString('pt-BR'),
                     dataAtualizacao: new Date().toISOString()
@@ -659,11 +689,13 @@
         function limparFormulario() {
             document.getElementById('petId').value = '';
             document.getElementById('nome').value = '';
+            document.getElementById('especie').value = '';
             document.getElementById('raca').value = '';
             document.getElementById('idade').value = '';
             document.getElementById('genero').value = '';
             document.getElementById('cor').value = '';
             document.getElementById('porte').value = '';
+            document.getElementById('tutor').value = '';
             document.getElementById('foto').value = '';
             
             atualizarCarteirinha({});
@@ -685,16 +717,18 @@
         window.exportarPDF = exportarPDF;
 
         // Atualizar visualização em tempo real
-        document.querySelectorAll('#nome, #raca, #idade, #genero, #cor, #porte, #foto').forEach(input => {
+        document.querySelectorAll('#nome, #especie, #raca, #idade, #genero, #cor, #porte, #tutor, #foto').forEach(input => {
             input.addEventListener('input', () => {
                 const dados = {
                     id: document.getElementById('petId').value || '-',
                     nome: document.getElementById('nome').value,
+                    especie: document.getElementById('especie').value,
                     raca: document.getElementById('raca').value,
                     idade: document.getElementById('idade').value,
                     genero: document.getElementById('genero').value,
                     cor: document.getElementById('cor').value,
                     porte: document.getElementById('porte').value,
+                    tutor: document.getElementById('tutor').value,
                     foto: document.getElementById('foto').value,
                     dataExpedicao: new Date().toLocaleDateString('pt-BR')
                 };
