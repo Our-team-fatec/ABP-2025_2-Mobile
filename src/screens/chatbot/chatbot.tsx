@@ -10,7 +10,11 @@ import {
   StyleSheet,
   Alert,
   Animated,
+  KeyboardAvoidingView,
+  Keyboard,
+  Dimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -80,6 +84,7 @@ const TypingIndicator = () => {
 };
 
 export default function Chatbot() {
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -91,6 +96,7 @@ export default function Chatbot() {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
   const quickQuestions = [
@@ -241,11 +247,37 @@ export default function Chatbot() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+        scrollToBottom();
+      }
+    );
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, []);
+
   return (
     <View style={styles.screenContainer}>
       <Header />
       
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        <View style={styles.container}>
         <View style={styles.chatHeader}>
           <View style={styles.avatarContainer}>
             <MaterialIcons name="pets" size={24} color="#667eea" />
@@ -342,7 +374,7 @@ export default function Chatbot() {
           ))}
         </ScrollView>
 
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { marginBottom: 60 + insets.bottom }]}>
           <Pressable 
             style={({ pressed }) => [
               styles.clearButton,
@@ -375,7 +407,8 @@ export default function Chatbot() {
             <MaterialIcons name="send" size={20} color="white" />
           </Pressable>
         </View>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
 
       <Footer />
     </View>
@@ -386,6 +419,9 @@ const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
   container: {
     flex: 1,
@@ -441,7 +477,8 @@ const styles = StyleSheet.create({
   },
   messagesContent: {
     padding: 15,
-    paddingBottom: 100,
+    paddingBottom: 160,
+    flexGrow: 1,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -564,15 +601,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
+    paddingBottom: Platform.OS === 'ios' ? 10 : 10,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
     gap: 10,
-    position: 'absolute',
-    bottom: 85,
-    left: 0,
-    right: 0,
-    zIndex: 100,
   },
   input: {
     flex: 1,

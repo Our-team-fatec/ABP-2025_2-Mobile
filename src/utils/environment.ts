@@ -11,12 +11,12 @@ import {
  * ALTERE AQUI para usar seu IP local quando precisar testar com backend local
  * Para usar: mude API_BASE_URL no .env para http://SEU_IP:3000/api
  */
-export const LOCAL_DEV_URL = 'https://davinci-pets-server.fly.dev/api';
+export const LOCAL_DEV_URL = 'https://davincipets-server.fly.dev/api';
 
 /**
  * URL de produção (Fly.dev)
  */
-export const PRODUCTION_URL = 'https://davinci-pets-server.fly.dev/api';
+export const PRODUCTION_URL = 'https://davincipets-server.fly.dev/api';
 
 /**
  * Utilitário para acessar variáveis de ambiente de forma segura
